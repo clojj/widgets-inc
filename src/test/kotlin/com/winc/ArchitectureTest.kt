@@ -40,9 +40,10 @@ class ArchitectureTest {
     // .withOptionalLayers(true)
 
     @ArchTest
-    val `ValueObjects reside in domain model value` =
+    val `ValueObjects reside in designated package and have private constructors` =
         ArchRuleDefinition.classes().that()
             .areAnnotatedWith(ValueObject::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
+            .andShould().haveOnlyPrivateConstructors()
 
 
     // can have other junit5 tests too
