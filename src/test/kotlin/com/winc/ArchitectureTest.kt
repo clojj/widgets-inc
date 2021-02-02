@@ -42,7 +42,7 @@ class ArchitectureTest {
     @ArchTest
     val `ValueObjects reside in domain model value` =
         ArchRuleDefinition.classes().that()
-            .implement(ValueObject::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
+            .areAnnotatedWith(ValueObject::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
 
 
     // can have other junit5 tests too

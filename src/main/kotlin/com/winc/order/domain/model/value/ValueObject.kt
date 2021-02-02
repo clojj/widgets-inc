@@ -7,7 +7,8 @@ import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.pattern
 
-inline class WidgetCode internal constructor(val code: String) : ValueObject {
+@ValueObject
+inline class WidgetCode private constructor(val code: String) {
     companion object {
         val validate = Validation<WidgetCode> {
             WidgetCode::code {
@@ -18,7 +19,7 @@ inline class WidgetCode internal constructor(val code: String) : ValueObject {
     }
 }
 
-internal interface ValueObject // TODO "marker" alternatives ?
+annotation class ValueObject
 
 // arrow adapter ?
 private fun <T> ValidationResult<T>.asEither() =
