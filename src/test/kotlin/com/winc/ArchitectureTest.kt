@@ -7,7 +7,7 @@ import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.onionArchitecture
-import dev.forkhandles.values.Value
+import com.winc.order.domain.model.value.ValueObject
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.fail
 
@@ -42,7 +42,7 @@ class ArchitectureTest {
     @ArchTest
     val `ValueObjects reside in domain model value` =
         ArchRuleDefinition.classes().that()
-            .implement(Value::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
+            .implement(ValueObject::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
 
 
     // can have other junit5 tests too
