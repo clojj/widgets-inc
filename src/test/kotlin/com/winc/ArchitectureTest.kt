@@ -7,6 +7,7 @@ import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.onionArchitecture
+import dev.forkhandles.values.Value
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.fail
 
@@ -25,7 +26,8 @@ class ArchitectureTest {
 
     @ArchTest
     val `all packages in order BC` =
-        ArchRuleDefinition.classes().that().resideOutsideOfPackage("$orderBoundedContext..").should()
+        ArchRuleDefinition.classes().that()
+            .resideOutsideOfPackage("$orderBoundedContext..").should()
             .containNumberOfElements(DescribedPredicate.equalTo(0))
 
     @ArchTest
@@ -35,8 +37,12 @@ class ArchitectureTest {
             .applicationServices("$orderBoundedContext.$applicationServices..")
             .domainModels("$orderBoundedContext.$domainModel..")
             .domainServices("$orderBoundedContext.$domainService..")
-            // .withOptionalLayers(true)
+    // .withOptionalLayers(true)
 
+    @ArchTest
+    val `ValueObjects reside in domain model value` =
+        ArchRuleDefinition.classes().that()
+            .implement(Value::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
 
 
     // can have other junit5 tests too

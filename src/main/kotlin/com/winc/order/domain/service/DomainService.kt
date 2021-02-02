@@ -1,8 +1,7 @@
 package com.winc.order.domain.service
 
-import com.winc.order.application.useCase
-import com.winc.order.domain.model.WidgetCode
+import com.winc.order.domain.model.value.WidgetCode
 
-fun domainService(widgetCode: WidgetCode): Int {
-    return widgetCode.value.toInt()
+fun domainService(widgetCode: WidgetCode): Pair<String, WidgetCode> {
+    return "approved" to widgetCode
 }

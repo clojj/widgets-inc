@@ -1,9 +1,11 @@
 package com.winc.order.application
 
-import com.winc.order.domain.model.WidgetCode
+import arrow.core.Either
+import com.winc.order.domain.model.value.WidgetCode
+import com.winc.order.domain.model.value.off
 import com.winc.order.domain.service.domainService
 
-fun useCase(): Int {
-    val widgetCode = WidgetCode.of("1234")
-    return domainService(widgetCode)
+fun useCase(widgetcode: String): Either<String?, Pair<String, WidgetCode>> {
+    val widgetCode = WidgetCode.off(widgetcode)
+    return widgetCode.map { domainService(it) }
 }
