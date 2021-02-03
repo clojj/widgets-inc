@@ -7,7 +7,11 @@ import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.onionArchitecture
-import com.winc.order.domain.model.value.ValueObject
+import com.winc.order.infra.springJpaEntities
+import ddd.Service
+import ddd.UseCase
+import org.jmolecules.ddd.annotation.Entity
+import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.fail
 
@@ -19,7 +23,7 @@ class ArchitectureTest {
 
     private val domainModel = "domain.model"
     private val domainService = "domain.service"
-    private val applicationServices = "application"
+    private val application = "application"
     private val adapter = "adapter"
 
     private val orderBoundedContext = "com.winc.order"
@@ -34,15 +38,41 @@ class ArchitectureTest {
     val `order BC is an onion, don't cry !` =
         onionArchitecture()
             .adapter("incoming-cli", "$orderBoundedContext.$adapter.cli..")
-            .applicationServices("$orderBoundedContext.$applicationServices..")
+            .applicationServices("$orderBoundedContext.$application..")
             .domainModels("$orderBoundedContext.$domainModel..")
             .domainServices("$orderBoundedContext.$domainService..")
     // .withOptionalLayers(true)
 
     @ArchTest
-    val `ValueObjects reside in designated package and have private constructors` =
+    val `JPA Entities reside in designated package` =
         ArchRuleDefinition.classes().that()
-            .areAnnotatedWith(ValueObject::class.java).should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
+            .areAnnotatedWith(javax.persistence.Entity::class.java)
+            .should().resideInAPackage(springJpaEntities) // TODO bounded context as separate package
+            // .should().resideInAPackage("$orderBoundedContext.$adapter.persistence.spring_jpa..")
+
+    @ArchTest
+    val `DDD Entities reside in designated package` =
+        ArchRuleDefinition.classes().that()
+            .areAnnotatedWith(Entity::class.java)
+            .should().resideInAPackage("$orderBoundedContext.$domainModel..")
+
+    @ArchTest
+    val `DDD application services (UseCases) reside in designated package` =
+        ArchRuleDefinition.methods().that()
+            .areAnnotatedWith(UseCase::class.java)
+            .should().beDeclaredInClassesThat().resideInAPackage("$orderBoundedContext.$application..")
+
+    @ArchTest
+    val `DDD domain services reside in designated package` =
+        ArchRuleDefinition.methods().that()
+            .areAnnotatedWith(Service::class.java)
+            .should().beDeclaredInClassesThat().resideInAPackage("$orderBoundedContext.$domainService..")
+
+    @ArchTest
+    val `DDD ValueObjects reside in designated package and have private constructors` =
+        ArchRuleDefinition.classes().that()
+            .areAnnotatedWith(ValueObject::class.java)
+            .should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
             .andShould().haveOnlyPrivateConstructors()
 
 

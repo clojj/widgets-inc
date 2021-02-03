@@ -1,5 +1,7 @@
 package com.winc.order.domain.model
 
 import com.winc.order.domain.model.value.WidgetCode
+import org.jmolecules.ddd.annotation.Entity
 
-data class Widget(val widgetCode: WidgetCode, val description: String)
+@Entity
+class WidgetOrder(val widgetCode: WidgetCode, val description: String)

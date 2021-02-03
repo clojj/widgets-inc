@@ -6,6 +6,7 @@ import io.konform.validation.Valid
 import io.konform.validation.Validation
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.pattern
+import org.jmolecules.ddd.annotation.ValueObject
 
 @ValueObject // only type + companion are public
 inline class WidgetCode private constructor(val code: String) {
@@ -18,8 +19,6 @@ inline class WidgetCode private constructor(val code: String) {
         fun of(string: String) = validate(WidgetCode(string)).asEither()
     }
 }
-
-internal annotation class ValueObject
 
 // arrow adapter
 private fun <T> ValidationResult<T>.asEither() =

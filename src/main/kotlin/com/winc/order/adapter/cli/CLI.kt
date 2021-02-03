@@ -1,8 +1,8 @@
 package com.winc.order.adapter.cli
 
-import com.winc.order.application.useCase
+import com.winc.order.application.checkWidgetCodeUseCase
 
 fun main() {
-    val result = useCase("A123")
+    val result = checkWidgetCodeUseCase("A123")
     println(result)
 }
