@@ -4,4 +4,4 @@ import com.winc.order.domain.model.value.WidgetCode
 import org.jmolecules.ddd.annotation.Entity
 
 @Entity
-class WidgetOrder(val widgetCode: WidgetCode, val description: String)
+data class Order(val code: WidgetCode, val amount: Int)

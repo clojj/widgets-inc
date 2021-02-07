@@ -90,7 +90,7 @@
 
         <dependency>
             <groupId>io.arrow-kt</groupId>
-            <artifactId>arrow-core-data</artifactId>
+            <artifactId>arrow-fx-coroutines</artifactId>
             <version>0.12.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

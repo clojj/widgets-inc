@@ -21,8 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.NestedServletException
+import java.util.*
 
 
 const val springJpaEntities = "com.winc.order.adapter.persistence.spring_jpa"
@@ -39,6 +40,20 @@ fun main(args: Array<String>) {
     }
 }
 
+@ControllerAdvice
+class GlobalExceptionHandler {
+    @ExceptionHandler(value = [Throwable::class])
+    fun handleException(throwable: Throwable): ResponseEntity<ErrorResponse> =
+        when (throwable) {
+            is NestedServletException -> when (throwable.cause) {
+                is PayloadException -> ResponseEntity.badRequest()
+                    .body(((throwable.cause) as PayloadException).errorResponse)
+                else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
+            }
+            else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
+        }
+}
+
 @RestController
 class OrderController(val orderApplication: OrderApplication) {
 
@@ -46,6 +61,15 @@ class OrderController(val orderApplication: OrderApplication) {
     fun hello(): String {
         return "Hello\n"
     }
+
+    @PostMapping("/orders", consumes = ["application/json"], produces = ["application/json"])
+    suspend fun createWidget(@RequestBody newOrder: NewOrder): ResponseEntity<OrderReceipt> =
+        // edge IO
+        orderApplication.createOrder(newOrder).fold({
+            throw PayloadException(ErrorResponse("$it via global handler"))
+        }) {
+            ResponseEntity.ok(it)
+        }
 
     @GetMapping("/admin")
     suspend fun admin(): ResponseEntity<ResponseEntity<String>> {
