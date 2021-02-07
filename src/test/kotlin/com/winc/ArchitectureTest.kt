@@ -37,7 +37,9 @@ class ArchitectureTest {
     @ArchTest
     val `order BC is an onion, don't cry !` =
         onionArchitecture()
-            .adapter("incoming-cli", "$orderBoundedContext.$adapter.cli..")
+            .adapter("infra", "$orderBoundedContext.infra..")
+            .adapter("cli", "$orderBoundedContext.$adapter.cli..")
+            .adapter("persistence", "$orderBoundedContext.$adapter.persistence..")
             .applicationServices("$orderBoundedContext.$application..")
             .domainModels("$orderBoundedContext.$domainModel..")
             .domainServices("$orderBoundedContext.$domainService..")
