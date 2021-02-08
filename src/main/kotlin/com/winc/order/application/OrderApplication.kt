@@ -45,17 +45,8 @@ class OrderApplication {
             processedOrder
         }
 
-    suspend fun validateOrder(newOrder: NewOrder): Validated<List<String>, Order> {
-        // TODO Order.of with all validations
-//        Order.of(newOrder.code, newOrder.amount)
-
-        val widgetCode: Validated<List<String>, WidgetCode> = WidgetCode.of(newOrder.code)
-        val validatedAmount = if (newOrder.amount > 100)
-            "amount!".nel().invalid()
-        else
-            newOrder.amount.valid()
-        return Validated.mapN(Semigroup.list(), widgetCode, validatedAmount) { code, amount -> Order(code, amount) }
-    }
+    suspend fun validateOrder(newOrder: NewOrder): Validated<List<String>, Order> =
+        Order.of(newOrder.code, newOrder.amount)
 
 
     fun processOrder(validatedOrder: Order): Either<List<String>, OrderReceipt> =
