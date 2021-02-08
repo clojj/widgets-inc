@@ -5,7 +5,6 @@ import arrow.core.invalid
 import arrow.core.valid
 import io.konform.validation.Valid
 import io.konform.validation.Validation
-import io.konform.validation.ValidationErrors
 import io.konform.validation.ValidationResult
 import io.konform.validation.jsonschema.pattern
 import org.jmolecules.ddd.annotation.ValueObject
@@ -18,10 +17,10 @@ inline class WidgetCode private constructor(val code: String) {
                 pattern("^[A-Z]{1}\\d{3,5}")
             }
         }
-        fun of(string: String): Validated<ValidationErrors, WidgetCode> = validate(WidgetCode(string)).asValidated()
+        fun of(string: String): Validated<List<String>, WidgetCode> = validate(WidgetCode(string)).asValidated()
     }
 }
 
 // arrow adapter
 private fun <T> ValidationResult<T>.asValidated() =
-    if (this is Valid) this.value.valid() else this.errors.invalid()
+    if (this is Valid) this.value.valid() else this.errors.map { "VALIDATION ERROR: ${it.message} in ${it.dataPath}" }.invalid()

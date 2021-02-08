@@ -1,9 +1,8 @@
 package com.winc.order.application
 
-import arrow.core.Either
-import arrow.core.Validated
+import arrow.core.*
 import arrow.core.computations.either
-import arrow.core.right
+import arrow.typeclasses.Semigroup
 import com.winc.order.domain.model.Order
 import com.winc.order.domain.model.value.WidgetCode
 import com.winc.order.domain.service.domainService
@@ -20,7 +19,7 @@ typealias checkWidgetCode = (String) -> Either<ValidationErrors, Pair<String, Wi
 class OrderApplication {
 
     @UseCase
-    private fun checkWidgetCodeUseCase(widgetcode: String): Either<ValidationErrors, Pair<String, WidgetCode>> {
+    private fun checkWidgetCodeUseCase(widgetcode: String): Either<List<String>, Pair<String, WidgetCode>> {
 
         // domain validates incoming
         val widgetCode = WidgetCode.of(widgetcode).toEither()
@@ -28,7 +27,7 @@ class OrderApplication {
         return widgetCode.map { domainService(it) }
     }
 
-    fun createCheckWidgetCodeUseCase(): checkWidgetCode {
+    fun createCheckWidgetCodeUseCase(): (String) -> Either<List<String>, Pair<String, WidgetCode>> {
         // TODO retrieve authorities from spring security context here ?
         return { code -> checkWidgetCodeUseCase(code) }
     }
@@ -39,19 +38,28 @@ class OrderApplication {
     // TODO onion violations:
     //  NewOrder -> NewOrderCommand
     //  move UUID to Order, return just UUID
-    suspend fun createOrder(newOrder: NewOrder): Either<ValidationErrors, OrderReceipt> =
+    suspend fun createOrder(newOrder: NewOrder): Either<List<String>, OrderReceipt> =
         either {
-            val validateOrder = validateOrder(newOrder)()
-            val order = processOrder(validateOrder)()
-            order
+            val validatedOrder = validateOrder(newOrder)()
+            val processedOrder = processOrder(validatedOrder)()
+            processedOrder
         }
 
-    suspend fun validateOrder(newOrder: NewOrder): Validated<ValidationErrors, Order> =
+    suspend fun validateOrder(newOrder: NewOrder): Validated<List<String>, Order> {
         // TODO Order.of with all validations
-        WidgetCode.of(newOrder.code).map { Order(it, newOrder.amount) }
+//        Order.of(newOrder.code, newOrder.amount)
+
+        val widgetCode: Validated<List<String>, WidgetCode> = WidgetCode.of(newOrder.code)
+        val validatedAmount = if (newOrder.amount > 100)
+            "amount!".nel().invalid()
+        else
+            newOrder.amount.valid()
+        return Validated.mapN(Semigroup.list(), widgetCode, validatedAmount) { code, amount -> Order(code, amount) }
+    }
 
 
-    fun processOrder(validateOrder: Order): Either<ValidationErrors, OrderReceipt> =
-          OrderReceipt(UUID.randomUUID(), validateOrder.code.code, validateOrder.amount).right()
+    fun processOrder(validatedOrder: Order): Either<List<String>, OrderReceipt> =
+        OrderReceipt(UUID.randomUUID(), validatedOrder.code.code, validatedOrder.amount).right()
+
 
 }
