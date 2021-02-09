@@ -1,19 +1,24 @@
 package com.winc.order.application
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Validated
 import arrow.core.computations.either
-import arrow.typeclasses.Semigroup
+import arrow.core.right
 import com.winc.order.domain.model.Order
 import com.winc.order.domain.model.value.WidgetCode
 import com.winc.order.domain.service.domainService
-import com.winc.order.infra.NewOrder
-import com.winc.order.infra.OrderReceipt
+import ddd.Pure
 import ddd.UseCase
 import io.konform.validation.ValidationErrors
 import org.springframework.stereotype.Service
 import java.util.*
 
 typealias checkWidgetCode = (String) -> Either<ValidationErrors, Pair<String, WidgetCode>>
+
+@Pure
+private fun testPure(widgetcode: String): Unit {
+    println("abc")
+}
 
 @Service
 class OrderApplication {
@@ -32,25 +37,27 @@ class OrderApplication {
         return { code -> checkWidgetCodeUseCase(code) }
     }
 
-    @UseCase
     // TODO general sealed hierarchy for error type (ValidationErrors is just one choice-type)
 
     // TODO onion violations:
     //  NewOrder -> NewOrderCommand
     //  move UUID to Order, return just UUID
-    suspend fun createOrder(newOrder: NewOrder): Either<List<String>, OrderReceipt> =
+    @UseCase
+    suspend fun createOrder(createOrderCommand: CreateOrderCommand): Either<List<String>, OrderCreatedEvent> =
         either {
-            val validatedOrder = validateOrder(newOrder)()
-            val processedOrder = processOrder(validatedOrder)()
-            processedOrder
+            val validatedOrder = validateOrder(createOrderCommand)()
+            val orderCreatedEvent = processOrder(validatedOrder)()
+            orderCreatedEvent
         }
 
-    suspend fun validateOrder(newOrder: NewOrder): Validated<List<String>, Order> =
+    suspend fun validateOrder(newOrder: CreateOrderCommand): Validated<List<String>, Order> =
         Order.of(newOrder.code, newOrder.amount)
 
 
-    fun processOrder(validatedOrder: Order): Either<List<String>, OrderReceipt> =
-        OrderReceipt(UUID.randomUUID(), validatedOrder.code.code, validatedOrder.amount).right()
+    fun processOrder(validatedOrder: Order): Either<List<String>, OrderCreatedEvent> =
+        OrderCreatedEvent(UUID.randomUUID(), validatedOrder.code.code, validatedOrder.amount).right()
 
+    data class CreateOrderCommand(val code: String, val amount: Int)
 
+    data class OrderCreatedEvent(val orderId: UUID, val code: String, val amount: Int)
 }

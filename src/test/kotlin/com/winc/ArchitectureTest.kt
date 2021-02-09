@@ -2,17 +2,20 @@ package com.winc
 
 import com.tngtech.archunit.base.DescribedPredicate
 import com.tngtech.archunit.core.domain.JavaClasses
+import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.onionArchitecture
 import com.winc.order.infra.springJpaEntities
+import ddd.Pure
 import ddd.Service
 import ddd.UseCase
 import org.jmolecules.ddd.annotation.Entity
 import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
 @AnalyzeClasses(
@@ -78,6 +81,19 @@ class ArchitectureTest {
             .should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
             .andShould().haveOnlyPrivateConstructors()
 
+    @Test
+    fun `funs`() {
+        val classes = ClassFileImporter().withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS).importPackages(orderBoundedContext)
+        for (clazz in classes) {
+            clazz.methods.filter { it.isAnnotatedWith(Pure::class.java) }.forEach {
+                it.callsFromSelf.forEach {
+                    println(it.target)
+                    println(it.targetOwner.fullName)
+                }
+            }
+        }
+    }
 
     // can have other junit5 tests too
     @Disabled
@@ -87,11 +103,13 @@ class ArchitectureTest {
 // HELPERS
 
 fun printImportedClasses(importedClasses: JavaClasses) {
-    println(importedClasses.map {
-        "${
+    println(
+        importedClasses.map {
+            "${
             if (it.packageName.isEmpty())
                 "ROOT"
             else it.packageName
-        }.${it.simpleName}"
-    })
+            }.${it.simpleName}"
+        }
+    )
 }

@@ -65,10 +65,12 @@ class OrderController(val orderApplication: OrderApplication) {
     @PostMapping("/orders", consumes = ["application/json"], produces = ["application/json"])
     suspend fun createWidget(@RequestBody newOrder: NewOrder): ResponseEntity<OrderReceipt> =
         // edge IO
-        orderApplication.createOrder(newOrder).fold({
+        orderApplication.createOrder(newOrder.toCommand()).fold({
             throw PayloadException(ErrorResponse("$it via global handler"))
         }) {
-            ResponseEntity.ok(it)
+            with (it) {
+                ResponseEntity.ok(OrderReceipt(orderId, code, amount))
+            }
         }
 
     @GetMapping("/admin")

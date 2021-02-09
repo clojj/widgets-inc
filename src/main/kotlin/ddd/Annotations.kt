@@ -5,3 +5,5 @@ package ddd
 internal annotation class Service
 
 internal annotation class UseCase
+
+internal annotation class Pure

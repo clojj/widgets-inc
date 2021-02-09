@@ -1,8 +1,12 @@
 package com.winc.order.infra
 
+import com.winc.order.application.OrderApplication
 import java.util.*
 
 data class NewOrder(val code: String, val amount: Int = 1)
+
+fun NewOrder.toCommand(): OrderApplication.CreateOrderCommand =
+    OrderApplication.CreateOrderCommand(code, amount)
 
 data class OrderReceipt(val orderId: UUID, val code: String, val amount: Int)
 
