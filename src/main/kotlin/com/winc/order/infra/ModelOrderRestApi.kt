@@ -8,7 +8,7 @@ data class NewOrder(val code: String, val amount: Int = 1)
 fun NewOrder.toCommand(): OrderApplication.CreateOrderCommand =
     OrderApplication.CreateOrderCommand(code, amount)
 
-data class OrderReceipt(val orderId: UUID, val code: String, val amount: Int)
+data class OrderReceipt(val orderId: UUID)
 
 data class ErrorResponse(val error: String)
 

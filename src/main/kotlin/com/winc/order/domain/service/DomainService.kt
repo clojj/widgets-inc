@@ -4,6 +4,6 @@ import com.winc.order.domain.model.value.WidgetCode
 import ddd.Service
 
 @Service
-fun domainService(widgetCode: WidgetCode): Pair<String, WidgetCode> {
+fun someDomainService(widgetCode: WidgetCode): Pair<String, WidgetCode> {
     return "approved" to widgetCode
 }

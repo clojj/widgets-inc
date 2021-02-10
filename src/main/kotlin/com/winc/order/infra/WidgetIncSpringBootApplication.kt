@@ -69,7 +69,7 @@ class OrderController(val orderApplication: OrderApplication) {
             throw PayloadException(ErrorResponse("$it via global handler"))
         }) {
             with (it) {
-                ResponseEntity.ok(OrderReceipt(orderId, code, amount))
+                ResponseEntity.ok(OrderReceipt(orderId))
             }
         }
 

@@ -1,18 +1,19 @@
 package com.winc.order.domain.model
 
-import arrow.core.*
+import arrow.core.Validated
+import arrow.core.list
 import arrow.typeclasses.Semigroup
 import com.capraro.kalidation.constraints.function.range
 import com.capraro.kalidation.dsl.constraints
 import com.capraro.kalidation.dsl.property
 import com.capraro.kalidation.dsl.validationSpec
-import com.capraro.kalidation.spec.ValidationResult
 import com.winc.order.domain.model.value.WidgetCode
 import org.jmolecules.ddd.annotation.Entity
 
 inline val Int.value: Int
     get() = this
 
+// @Aggregate ?
 @Entity
 data class Order(val code: WidgetCode, val amount: Int) {
 

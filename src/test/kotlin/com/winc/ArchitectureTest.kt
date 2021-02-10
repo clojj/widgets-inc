@@ -1,7 +1,7 @@
 package com.winc
 
+import archunit.extensions.topFuns
 import com.tngtech.archunit.base.DescribedPredicate
-import com.tngtech.archunit.core.domain.JavaClasses
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.junit.AnalyzeClasses
@@ -14,9 +14,7 @@ import ddd.Service
 import ddd.UseCase
 import org.jmolecules.ddd.annotation.Entity
 import org.jmolecules.ddd.annotation.ValueObject
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.fail
 
 @AnalyzeClasses(
     packages = [""],
@@ -31,8 +29,9 @@ class ArchitectureTest {
 
     private val orderBoundedContext = "com.winc.order"
 
-    // TODO enable after extracting package "ddd"
-    // @ArchTest
+    // TODO enable after extracting packages other than orderBoundedContext
+    // TODO track ArchUnit issue #222 and PR https://github.com/TNG/ArchUnit/pull/278
+    @ArchTest
     val `all packages in order BC` =
         ArchRuleDefinition.classes().that()
             .resideOutsideOfPackage("$orderBoundedContext..").should()
@@ -54,7 +53,7 @@ class ArchitectureTest {
         ArchRuleDefinition.classes().that()
             .areAnnotatedWith(javax.persistence.Entity::class.java)
             .should().resideInAPackage(springJpaEntities) // TODO bounded context as separate package
-            // .should().resideInAPackage("$orderBoundedContext.$adapter.persistence.spring_jpa..")
+    // .should().resideInAPackage("$orderBoundedContext.$adapter.persistence.spring_jpa..")
 
     @ArchTest
     val `DDD Entities reside in designated package` =
@@ -82,34 +81,22 @@ class ArchitectureTest {
             .andShould().haveOnlyPrivateConstructors()
 
     @Test
-    fun `funs`() {
-        val classes = ClassFileImporter().withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS).importPackages(orderBoundedContext)
-        for (clazz in classes) {
-            clazz.methods.filter { it.isAnnotatedWith(Pure::class.java) }.forEach {
-                it.callsFromSelf.forEach {
-                    println(it.target)
-                    println(it.targetOwner.fullName)
+    fun `Explore toplevel functions annotated with @Pure`() {
+        ClassFileImporter()
+            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS)
+            .importPackages(orderBoundedContext)
+            .topFuns()
+            .map {
+                println("topFun: $it")
+                it
+            }
+            .filter { it.isAnnotatedWith(Pure::class.java) }
+            .forEach {
+                println("pure ? $it")
+                it.callsFromSelf.forEach { call ->
+                    println("\t" + call.target)
                 }
             }
-        }
     }
-
-    // can have other junit5 tests too
-    @Disabled
-    fun test(): Unit = fail("failing miserably")
-}
-
-// HELPERS
-
-fun printImportedClasses(importedClasses: JavaClasses) {
-    println(
-        importedClasses.map {
-            "${
-            if (it.packageName.isEmpty())
-                "ROOT"
-            else it.packageName
-            }.${it.simpleName}"
-        }
-    )
 }
