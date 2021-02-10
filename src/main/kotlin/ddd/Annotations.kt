@@ -2,8 +2,12 @@ package ddd
 
 // TODO PR in jmolecules-ddd ? or separate module
 
-internal annotation class Service
+internal interface DDD {
+    annotation class ApplicationService
+    annotation class DomainService
+    annotation class Entity
+}
 
-internal annotation class UseCase
+internal typealias UseCase = DDD.ApplicationService
 
 internal annotation class Pure

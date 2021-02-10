@@ -9,10 +9,9 @@ import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.onionArchitecture
 import com.winc.order.infra.springJpaEntities
+import ddd.DDD
 import ddd.Pure
-import ddd.Service
 import ddd.UseCase
-import org.jmolecules.ddd.annotation.Entity
 import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Test
 
@@ -58,7 +57,7 @@ class ArchitectureTest {
     @ArchTest
     val `DDD Entities reside in designated package` =
         ArchRuleDefinition.classes().that()
-            .areAnnotatedWith(Entity::class.java)
+            .areAnnotatedWith(DDD.Entity::class.java)
             .should().resideInAPackage("$orderBoundedContext.$domainModel..")
 
     @ArchTest
@@ -70,7 +69,7 @@ class ArchitectureTest {
     @ArchTest
     val `DDD domain services reside in designated package` =
         ArchRuleDefinition.methods().that()
-            .areAnnotatedWith(Service::class.java)
+            .areAnnotatedWith(DDD.DomainService::class.java)
             .should().beDeclaredInClassesThat().resideInAPackage("$orderBoundedContext.$domainService..")
 
     @ArchTest
