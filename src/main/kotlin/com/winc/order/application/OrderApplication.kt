@@ -6,22 +6,16 @@ import arrow.core.computations.either
 import arrow.core.right
 import com.winc.order.domain.model.Order
 import com.winc.order.domain.model.value.WidgetCode
+import com.winc.order.domain.ports.incoming.CreateOrderCommand
+import com.winc.order.domain.ports.incoming.OrderApplication
+import com.winc.order.domain.ports.incoming.OrderCreatedEvent
 import com.winc.order.domain.service.someDomainService
-import ddd.Pure
 import ddd.UseCase
-import io.konform.validation.ValidationErrors
 import org.springframework.stereotype.Service
 import java.util.*
 
-typealias checkWidgetCode = (String) -> Either<ValidationErrors, Pair<String, WidgetCode>>
-
-@Pure
-fun testPure(widgetcode: String): Unit {
-    println("abc")
-}
-
 @Service
-class OrderApplication {
+class OrderApplication : OrderApplication {
 
     @UseCase
     private fun checkWidgetCodeUseCase(widgetcode: String): Either<List<String>, Pair<String, WidgetCode>> {
@@ -32,7 +26,7 @@ class OrderApplication {
         return widgetCode.map { someDomainService(it) }
     }
 
-    fun createCheckWidgetCodeUseCase(): (String) -> Either<List<String>, Pair<String, WidgetCode>> {
+    override fun createCheckWidgetCodeUseCase(): (String) -> Either<List<String>, Pair<String, WidgetCode>> {
         // TODO retrieve authorities from spring security context here ?
         return { code -> checkWidgetCodeUseCase(code) }
     }
@@ -45,7 +39,7 @@ class OrderApplication {
     // TODO like a function of an @Aggregate ?
     //  Command -> State -> (State, [Event])
     @UseCase
-    suspend fun createOrder(createOrderCommand: CreateOrderCommand): Either<List<String>, OrderCreatedEvent> =
+    override suspend fun createOrder(createOrderCommand: CreateOrderCommand): Either<List<String>, OrderCreatedEvent> =
         either {
             val validatedOrder = validateOrder(createOrderCommand)()
             val orderCreatedEvent = processOrder(validatedOrder)()
@@ -65,7 +59,4 @@ class OrderApplication {
         return UUID.randomUUID()
     }
 
-    data class CreateOrderCommand(val code: String, val amount: Int)
-
-    data class OrderCreatedEvent(val orderId: UUID)
 }

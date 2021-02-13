@@ -1,12 +1,12 @@
-package com.winc.order.infra
+package com.winc.order.adapter.rest
 
-import com.winc.order.application.OrderApplication
+import com.winc.order.domain.ports.incoming.CreateOrderCommand
 import java.util.*
 
 data class NewOrder(val code: String, val amount: Int = 1)
 
-fun NewOrder.toCommand(): OrderApplication.CreateOrderCommand =
-    OrderApplication.CreateOrderCommand(code, amount)
+fun NewOrder.toCommand(): CreateOrderCommand =
+    CreateOrderCommand(code, amount)
 
 data class OrderReceipt(val orderId: UUID)
 

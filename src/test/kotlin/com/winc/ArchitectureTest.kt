@@ -7,6 +7,7 @@ import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
+import com.tngtech.archunit.library.Architectures.OnionArchitecture
 import com.tngtech.archunit.library.Architectures.onionArchitecture
 import com.winc.order.infra.springJpaEntities
 import ddd.DDD
@@ -37,10 +38,11 @@ class ArchitectureTest {
             .containNumberOfElements(DescribedPredicate.equalTo(0))
 
     @ArchTest
-    val `order BC is an onion, don't cry !` =
+    val itIsAnOnion: OnionArchitecture =
         onionArchitecture()
             .adapter("infra", "$orderBoundedContext.infra..")
             .adapter("cli", "$orderBoundedContext.$adapter.cli..")
+            .adapter("rest", "$orderBoundedContext.$adapter.rest..")
             .adapter("persistence", "$orderBoundedContext.$adapter.persistence..")
             .applicationServices("$orderBoundedContext.$application..")
             .domainModels("$orderBoundedContext.$domainModel..")
