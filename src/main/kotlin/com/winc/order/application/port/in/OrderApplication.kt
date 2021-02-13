@@ -1,11 +1,16 @@
-package com.winc.order.domain.ports.incoming
+package com.winc.order.application.port.`in`
 
 import arrow.core.Either
 import com.winc.order.domain.model.value.WidgetCode
+import ddd.DDD
 import java.util.*
 
 interface OrderApplication {
+
+    @DDD.UseCase
     suspend fun createOrder(createOrderCommand: CreateOrderCommand): Either<List<String>, OrderCreatedEvent>
+
+    @DDD.UseCase
     fun createCheckWidgetCodeUseCase(): (String) -> Either<List<String>, Pair<String, WidgetCode>>
 }
 

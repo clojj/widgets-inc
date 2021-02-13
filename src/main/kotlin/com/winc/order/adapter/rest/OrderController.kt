@@ -1,6 +1,6 @@
 package com.winc.order.adapter.rest
 
-import com.winc.order.domain.ports.incoming.OrderApplication
+import com.winc.order.application.port.`in`.OrderApplication
 import com.winc.order.infra.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

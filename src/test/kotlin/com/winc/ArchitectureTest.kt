@@ -12,7 +12,6 @@ import com.tngtech.archunit.library.Architectures.onionArchitecture
 import com.winc.order.infra.springJpaEntities
 import ddd.DDD
 import ddd.Pure
-import ddd.UseCase
 import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Test
 
@@ -44,7 +43,8 @@ class ArchitectureTest {
             .adapter("cli", "$orderBoundedContext.$adapter.cli..")
             .adapter("rest", "$orderBoundedContext.$adapter.rest..")
             .adapter("persistence", "$orderBoundedContext.$adapter.persistence..")
-            .applicationServices("$orderBoundedContext.$application..")
+            .applicationServices("$orderBoundedContext.$application.port..")
+            .applicationServices("$orderBoundedContext.$application.service..")
             .domainModels("$orderBoundedContext.$domainModel..")
             .domainServices("$orderBoundedContext.$domainService..")
     // .withOptionalLayers(true)
@@ -65,7 +65,7 @@ class ArchitectureTest {
     @ArchTest
     val `DDD application services (UseCases) reside in designated package` =
         ArchRuleDefinition.methods().that()
-            .areAnnotatedWith(UseCase::class.java)
+            .areAnnotatedWith(DDD.UseCase::class.java)
             .should().beDeclaredInClassesThat().resideInAPackage("$orderBoundedContext.$application..")
 
     @ArchTest

@@ -1,4 +1,6 @@
 
+## domain @Aggregate with Command -> State -> (State, [Event])
+
 ## checkWidgetCodeUseCase() ...replace or improve
 
 ## better kalidation alignment with Validated
