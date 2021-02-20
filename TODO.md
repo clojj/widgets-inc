@@ -1,4 +1,8 @@
 
+## find non-blocking reactive exception handling for `txo.executeAndAwait(block)`
+
+## "error json-response only via ExceptionHandler ?"
+
 ## flyway DB setup
 
 ## onion: violation for dependencies between adapters ?

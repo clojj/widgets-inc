@@ -7,7 +7,6 @@ import com.winc.order.domain.model.Order
 import com.winc.order.domain.port.`in`.CreateOrderCommand
 import ddd.DDD
 import io.r2dbc.spi.ConnectionFactory
-import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.r2dbc.connection.R2dbcTransactionManager
 import org.springframework.transaction.ReactiveTransaction
 import org.springframework.transaction.reactive.TransactionalOperator
@@ -22,11 +21,10 @@ typealias SaveOrder = (order: Order) -> Either<Nel<String>, Mono<UUID>>
 interface CreateOrderUseCase {
     val createOrder: SaveOrder
 
-    suspend fun CreateOrderCommand.runUseCase(): Either<Nel<String>, UUID> {
+    suspend fun CreateOrderCommand.runUseCase(): Either<Nel<String>, Mono<UUID>> {
         return either {
             val validatedOrder = Order.of(code, amount).bind()
-            val uuid = createOrder(validatedOrder).bind()
-            uuid.awaitFirst()
+            createOrder(validatedOrder).bind()
         }
     }
 }
