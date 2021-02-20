@@ -1,6 +1,6 @@
 package com.winc.order.adapter.rest
 
-import com.winc.order.application.port.`in`.OrderApplication
+import com.winc.order.domain.port.`in`.OrderApplication
 import com.winc.order.infra.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.NestedServletException
+import java.util.*
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -26,50 +27,35 @@ class GlobalExceptionHandler {
 }
 
 @RestController
-class OrderController(val orderApplication: OrderApplication) {
-
-    @GetMapping("/hello")
-    fun hello(): String {
-        return "Hello\n"
-    }
+class OrderController(
+    private val orderApplication: OrderApplication
+) {
 
     @PostMapping("/orders", consumes = ["application/json"], produces = ["application/json"])
-    suspend fun createWidget(@RequestBody newOrder: NewOrder): ResponseEntity<OrderReceipt> =
-        // edge IO
-        orderApplication.createOrder(newOrder.toCommand()).fold({
-            throw PayloadException(ErrorResponse("$it via global handler"))
-        }) {
-            with (it) {
-                ResponseEntity.ok(OrderReceipt(orderId))
+    suspend fun createOrder(@RequestBody newOrder: NewOrder): ResponseEntity<OrderReceipt> =
+        orderApplication.createOrder(newOrder.toCommand())
+            .fold({
+                throw PayloadException(ErrorResponse("$it via global handler"))
+            }) {
+                ResponseEntity.ok(OrderReceipt(it.orderId))
             }
-        }
 
-    @GetMapping("/admin")
-    suspend fun admin(): ResponseEntity<ResponseEntity<String>> {
+    @GetMapping("/widget") // TODO @PreAuthorize("admin")
+    suspend fun checkWidgetCode(): ResponseEntity<String> {
         println("admin in thread ${Thread.currentThread().name}")
 
-/* in same thread
-        coroutineScope {
-            async {
-                retrieveAuthorities()
-            }
-        }
-*/
-
         // in different thread
-        val responseEntity = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             val result = async {
                 val authorities = retrieveAuthorities()
 
                 // TODO somehow pass authorities into application/domain
-                val either = orderApplication.createCheckWidgetCodeUseCase()("A999")
+                val either = orderApplication.checkWidgetCode()("A999")
 
                 return@async either.fold({ ResponseEntity.ok("errors: $it") }) { ResponseEntity.ok("authorities $authorities : $it") }
             }
-            val response = result.await()
-            return@withContext ResponseEntity.ok(response)
+            result.await()
         }
-        return responseEntity
     }
 
     private suspend fun retrieveAuthorities(): List<String> {

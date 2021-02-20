@@ -1,4 +1,8 @@
 
+## flyway DB setup
+
+## onion: violation for dependencies between adapters ?
+
 ## domain @Aggregate with Command -> State -> (State, [Event])
 
 ## checkWidgetCodeUseCase() ...replace or improve

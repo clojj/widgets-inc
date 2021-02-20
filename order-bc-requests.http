@@ -6,3 +6,12 @@ Content-Type: application/json
   "code": "A123",
   "amount": 8
 }
+
+###
+POST http://localhost:8080/fun/orders
+Content-Type: application/json
+
+{
+  "code": "B123",
+  "amount": 5
+}

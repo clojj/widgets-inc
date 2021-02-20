@@ -9,7 +9,6 @@ import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.OnionArchitecture
 import com.tngtech.archunit.library.Architectures.onionArchitecture
-import com.winc.order.infra.springJpaEntities
 import ddd.DDD
 import ddd.Pure
 import org.jmolecules.ddd.annotation.ValueObject
@@ -21,6 +20,7 @@ import org.junit.jupiter.api.Test
 )
 class ArchitectureTest {
 
+    private val domainPortIn = "domain.port.in"
     private val domainModel = "domain.model"
     private val domainService = "domain.service"
     private val application = "application"
@@ -50,11 +50,10 @@ class ArchitectureTest {
     // .withOptionalLayers(true)
 
     @ArchTest
-    val `JPA Entities reside in designated package` =
-        ArchRuleDefinition.classes().that()
-            .areAnnotatedWith(javax.persistence.Entity::class.java)
-            .should().resideInAPackage(springJpaEntities) // TODO bounded context as separate package
-    // .should().resideInAPackage("$orderBoundedContext.$adapter.persistence.spring_jpa..")
+    val `Entities reside in designated package` =
+        ArchRuleDefinition.classes().that().haveSimpleNameEndingWith("Entity")
+            .should().resideInAPackage("com.winc.order.adapter.persistence.r2dbc") // TODO bounded context as separate package
+    // .should().resideInAPackage("$orderBoundedContext.$adapter.persistence.r2dbc..")
 
     @ArchTest
     val `DDD Entities reside in designated package` =
@@ -66,7 +65,7 @@ class ArchitectureTest {
     val `DDD application services (UseCases) reside in designated package` =
         ArchRuleDefinition.methods().that()
             .areAnnotatedWith(DDD.UseCase::class.java)
-            .should().beDeclaredInClassesThat().resideInAPackage("$orderBoundedContext.$application..")
+            .should().beDeclaredInClassesThat().resideInAnyPackage("$orderBoundedContext.$application..", "$orderBoundedContext.$domainPortIn..")
 
     @ArchTest
     val `DDD domain services reside in designated package` =

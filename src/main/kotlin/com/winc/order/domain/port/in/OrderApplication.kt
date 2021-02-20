@@ -1,4 +1,4 @@
-package com.winc.order.application.port.`in`
+package com.winc.order.domain.port.`in`
 
 import arrow.core.Either
 import com.winc.order.domain.model.value.WidgetCode
@@ -11,7 +11,7 @@ interface OrderApplication {
     suspend fun createOrder(createOrderCommand: CreateOrderCommand): Either<List<String>, OrderCreatedEvent>
 
     @DDD.UseCase
-    fun createCheckWidgetCodeUseCase(): (String) -> Either<List<String>, Pair<String, WidgetCode>>
+    fun checkWidgetCode(): (String) -> Either<List<String>, Pair<String, WidgetCode>>
 }
 
 data class CreateOrderCommand(val code: String, val amount: Int)

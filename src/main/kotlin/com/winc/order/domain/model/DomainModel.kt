@@ -1,8 +1,8 @@
 package com.winc.order.domain.model
 
+import arrow.core.Nel
 import arrow.core.Validated
-import arrow.core.list
-import arrow.typeclasses.Semigroup
+import arrow.core.extensions.nonemptylist.semigroup.semigroup
 import com.capraro.kalidation.constraints.function.range
 import com.capraro.kalidation.dsl.constraints
 import com.capraro.kalidation.dsl.property
@@ -26,11 +26,11 @@ data class Order(val code: WidgetCode, val amount: Int) {
             }
         }
 
-        fun of(code: String, amount: Int): Validated<List<String>, Order> {
-            val widgetCode: Validated<List<String>, WidgetCode> = WidgetCode.of(code)
+        fun of(code: String, amount: Int): Validated<Nel<String>, Order> {
+            val widgetCode: Validated<Nel<String>, WidgetCode> = WidgetCode.of(code)
             // TODO better kalidation alignment
-            val validatedAmount: Validated<List<String>, Int> = spec.validateType(amount).mapLeft { it.toList().map { "${it.fieldName} has issue: ${it.message}" } }
-            return Validated.mapN(Semigroup.list(), widgetCode, validatedAmount) { code, amount -> Order(code, amount) }
+            val validatedAmount: Validated<Nel<String>, Int> = spec.validateType(amount).mapLeft { Nel.fromListUnsafe(it.toList().map { "${it.fieldName} has issue: ${it.message}" }) }
+            return Validated.mapN(Nel.semigroup(), widgetCode, validatedAmount) { code, amount -> Order(code, amount) }
         }
     }
 }

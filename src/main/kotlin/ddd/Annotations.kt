@@ -9,4 +9,8 @@ interface DDD {
     annotation class Entity
 }
 
+interface HEXA {
+    annotation class Adapter
+}
+
 annotation class Pure
