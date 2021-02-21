@@ -5,7 +5,7 @@ import java.util.*
 
 data class NewOrder(val code: String, val amount: Int = 1)
 
-fun NewOrder.toCommand(): CreateOrderCommand =
+fun NewOrder.toCreateOrderCommand(): CreateOrderCommand =
     CreateOrderCommand(code, amount)
 
 data class OrderReceipt(val orderId: UUID)

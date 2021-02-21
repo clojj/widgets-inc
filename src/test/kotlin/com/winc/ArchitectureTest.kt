@@ -15,7 +15,7 @@ import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Test
 
 @AnalyzeClasses(
-    packages = [""],
+    packages = ["com.winc"],
     importOptions = [ImportOption.DoNotIncludeJars::class, ImportOption.DoNotIncludeTests::class]
 )
 class ArchitectureTest {
@@ -43,10 +43,10 @@ class ArchitectureTest {
             .adapter("cli", "$orderBoundedContext.$adapter.cli..")
             .adapter("rest", "$orderBoundedContext.$adapter.rest..")
             .adapter("persistence", "$orderBoundedContext.$adapter.persistence..")
-            .applicationServices("$orderBoundedContext.$application.port..")
             .applicationServices("$orderBoundedContext.$application.service..")
             .domainModels("$orderBoundedContext.$domainModel..")
             .domainServices("$orderBoundedContext.$domainService..")
+            .domainServices("$orderBoundedContext.$domainPortIn..")
     // .withOptionalLayers(true)
 
     @ArchTest

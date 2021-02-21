@@ -7,12 +7,17 @@ import arrow.core.computations.either
 import arrow.core.right
 import com.winc.order.domain.model.Order
 import com.winc.order.domain.model.value.WidgetCode
-import com.winc.order.domain.port.`in`.CreateOrderCommand
+import com.winc.order.domain.port.`in`.*
 import com.winc.order.domain.port.`in`.OrderApplication
-import com.winc.order.domain.port.`in`.OrderCreatedEvent
 import com.winc.order.domain.service.someDomainService
+import io.r2dbc.pool.ConnectionPool
+import io.r2dbc.spi.ConnectionFactory
+import org.springframework.r2dbc.connection.R2dbcTransactionManager
 import org.springframework.stereotype.Service
+import org.springframework.transaction.ReactiveTransaction
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.reactive.TransactionalOperator
+import org.springframework.transaction.reactive.executeAndAwait
 import java.util.*
 
 @Service
@@ -51,3 +56,24 @@ class OrderApplication : OrderApplication {
         return widgetCode.map { someDomainService(it) }
     }
 }
+
+fun orderUseCase(connectionFactory: ConnectionPool, adapter: SaveOrder) =
+    object : CreateOrderUseCase {
+        override val createOrder = adapter
+
+        override suspend fun CreateOrderCommand.exec(): Either<Nel<String>, UUID> {
+            return runWriteTx(connectionFactory) { reactiveTx ->
+                either {
+                    val validatedOrder = Order.of(code, amount).bind()
+                    createOrder(validatedOrder).bind()
+                }
+            }
+        }
+    }
+
+suspend fun <A> runWriteTx(connectionFactory: ConnectionFactory, block: suspend (ReactiveTransaction) -> A): A {
+    val tm = R2dbcTransactionManager(connectionFactory)
+    val txo = TransactionalOperator.create(tm)
+    return txo.executeAndAwait(block) ?: TODO()
+}
+

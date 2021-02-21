@@ -33,7 +33,7 @@ class OrderController(
 
     @PostMapping("/orders", consumes = ["application/json"], produces = ["application/json"])
     suspend fun createOrder(@RequestBody newOrder: NewOrder): ResponseEntity<OrderReceipt> =
-        orderApplication.createOrder(newOrder.toCommand())
+        orderApplication.createOrder(newOrder.toCreateOrderCommand())
             .fold({
                 throw PayloadException(ErrorResponse("$it via global handler"))
             }) {
