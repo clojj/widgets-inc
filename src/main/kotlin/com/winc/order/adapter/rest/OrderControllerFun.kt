@@ -9,14 +9,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 import java.util.*
 
 @RestController
 class OrderControllerFun(private val orderRepository: OrderRepository, val connectionFactory: ConnectionPool) {
 
     @PostMapping("/fun/orders", consumes = ["application/json"], produces = ["application/json"])
-    suspend fun createOrderFun(@RequestBody newOrder: NewOrder): ResponseEntity<Mono<UUID>> =
+    suspend fun createOrderFun(@RequestBody newOrder: NewOrder): ResponseEntity<UUID> =
         object : CreateOrderUseCase {
             override val createOrder = createOrderAdapter(orderRepository)
         }.run {

@@ -11,17 +11,16 @@ import org.springframework.r2dbc.connection.R2dbcTransactionManager
 import org.springframework.transaction.ReactiveTransaction
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
-import reactor.core.publisher.Mono
 import java.util.*
 
 
-typealias SaveOrder = (order: Order) -> Either<Nel<String>, Mono<UUID>>
+typealias SaveOrder = suspend (order: Order) -> Either<Nel<String>, UUID>
 
 @DDD.UseCase
 interface CreateOrderUseCase {
     val createOrder: SaveOrder
 
-    suspend fun CreateOrderCommand.runUseCase(): Either<Nel<String>, Mono<UUID>> {
+    suspend fun CreateOrderCommand.runUseCase(): Either<Nel<String>, UUID> {
         return either {
             val validatedOrder = Order.of(code, amount).bind()
             createOrder(validatedOrder).bind()
