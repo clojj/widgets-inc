@@ -33,8 +33,7 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
         http.httpBasic()
             .and()
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/admin").hasRole("ADMIN")
-            .antMatchers(HttpMethod.GET, "/hello").hasAnyRole("ADMIN", "USER")
+            .antMatchers(HttpMethod.POST, "/fun/orders").hasAnyRole("ADMIN", "USER")
             .and()
             .csrf().disable()
     }
