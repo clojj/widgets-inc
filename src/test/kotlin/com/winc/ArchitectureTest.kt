@@ -15,7 +15,7 @@ import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Test
 
 @AnalyzeClasses(
-    packages = ["com.winc"],
+    packages = ["com.winc.order"],
     importOptions = [ImportOption.DoNotIncludeJars::class, ImportOption.DoNotIncludeTests::class]
 )
 class ArchitectureTest {
