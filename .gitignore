@@ -1,4 +1,5 @@
 # Project exclude paths
+/architecture-annotations/target
 /target/
 .idea/
 .idea/httpRequests
