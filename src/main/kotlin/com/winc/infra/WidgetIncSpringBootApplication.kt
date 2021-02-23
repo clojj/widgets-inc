@@ -1,4 +1,4 @@
-package com.winc.order.infra
+package com.winc.infra
 
 import org.springframework.boot.Banner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -9,8 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 @SpringBootApplication
 @EnableWebSecurity
-@ComponentScan(basePackages = ["com.winc.order"])
-@EnableR2dbcRepositories(basePackages = ["com.winc.order.adapter.persistence.r2dbc"])
+@ComponentScan(basePackages = ["com.winc.product"])
+@EnableR2dbcRepositories(basePackages = ["com.winc.*.adapter.*.persistence.r2dbc"])
 class WidgetIncApplication
 
 fun main(args: Array<String>) {
@@ -18,4 +18,3 @@ fun main(args: Array<String>) {
         setBannerMode(Banner.Mode.OFF)
     }
 }
-

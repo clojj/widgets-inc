@@ -1,6 +1,6 @@
 package com.winc.order.adapter.rest
 
-import com.winc.order.domain.port.`in`.CreateOrderCommand
+import com.winc.order.application.port.`in`.CreateOrderCommand
 import java.util.*
 
 data class NewOrder(val code: String, val amount: Int = 1)

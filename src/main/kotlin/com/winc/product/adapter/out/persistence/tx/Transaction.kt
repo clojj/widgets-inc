@@ -1,4 +1,4 @@
-package com.winc.product.adapter.persistence.tx
+package com.winc.product.adapter.out.persistence.tx
 
 import com.winc.product.application.port.`in`.Transact
 import io.r2dbc.spi.ConnectionFactory

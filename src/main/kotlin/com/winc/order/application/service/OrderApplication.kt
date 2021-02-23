@@ -5,11 +5,8 @@ import arrow.core.Nel
 import arrow.core.Validated
 import arrow.core.computations.either
 import arrow.core.right
+import com.winc.order.application.port.`in`.OrderApplication
 import com.winc.order.domain.model.Order
-import com.winc.order.domain.model.value.WidgetCode
-import com.winc.order.domain.port.`in`.*
-import com.winc.order.domain.port.`in`.OrderApplication
-import com.winc.order.domain.service.someDomainService
 import io.r2dbc.pool.ConnectionPool
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.r2dbc.connection.R2dbcTransactionManager
@@ -23,26 +20,21 @@ import java.util.*
 @Service
 class OrderApplication : OrderApplication {
 
-    override fun checkWidgetCode(): (String) -> Either<List<String>, Pair<String, WidgetCode>> {
-        // TODO retrieve authorities from spring security context here ?
-        return { code -> checkWidgetCodeUseCase(code) }
-    }
-
     // TODO general sealed hierarchy for error type (ValidationErrors is just one choice-type)
     @Transactional
-    override suspend fun createOrder(createOrderCommand: CreateOrderCommand): Either<Nel<String>, OrderCreatedEvent> =
+    override suspend fun createOrder(createOrderCommand: com.winc.order.application.port.`in`.CreateOrderCommand): Either<Nel<String>, com.winc.order.application.port.`in`.OrderCreatedEvent> =
         either {
             val validatedOrder = validateOrder(createOrderCommand).bind()
             val orderCreatedEvent = processOrder(validatedOrder).bind()
             orderCreatedEvent
         }
 
-    suspend fun validateOrder(newOrder: CreateOrderCommand): Validated<Nel<String>, Order> =
+    suspend fun validateOrder(newOrder: com.winc.order.application.port.`in`.CreateOrderCommand): Validated<Nel<String>, Order> =
         Order.of(newOrder.code, newOrder.amount)
 
-    fun processOrder(validatedOrder: Order): Either<Nel<String>, OrderCreatedEvent> {
+    fun processOrder(validatedOrder: Order): Either<Nel<String>, com.winc.order.application.port.`in`.OrderCreatedEvent> {
         val uuid = insertOrder(validatedOrder)
-        return OrderCreatedEvent(uuid).right()
+        return com.winc.order.application.port.`in`.OrderCreatedEvent(uuid).right()
     }
 
     // TODO interface of outgoing persistence-adapter
@@ -50,18 +42,13 @@ class OrderApplication : OrderApplication {
         return UUID.randomUUID()
     }
 
-    private fun checkWidgetCodeUseCase(widgetcode: String): Either<List<String>, Pair<String, WidgetCode>> {
-        // domain validates incoming
-        val widgetCode = WidgetCode.of(widgetcode).toEither()
-        return widgetCode.map { someDomainService(it) }
-    }
 }
 
-fun orderUseCase(connectionFactory: ConnectionPool, adapter: SaveOrder) =
-    object : CreateOrderUseCase {
+fun orderUseCase(connectionFactory: ConnectionPool, adapter: com.winc.order.application.port.`in`.SaveOrder) =
+    object : com.winc.order.application.port.`in`.CreateOrderUseCase {
         override val createOrder = adapter
 
-        override suspend fun CreateOrderCommand.exec(): Either<Nel<String>, UUID> {
+        override suspend fun com.winc.order.application.port.`in`.CreateOrderCommand.exec(): Either<Nel<String>, UUID> {
             return runWriteTx(connectionFactory) { reactiveTx ->
                 either {
                     val validatedOrder = Order.of(code, amount).bind()

@@ -1,5 +1,9 @@
 
-## OrderControllerFun: AuditorAware with Spring Security
+## move all code from order to product, then delete order
+
+## verify com.winc.archunit.HexagonalArchitecture from buckpal
+
+## ProductController: AuditorAware with Spring Security
 
 ## find non-blocking reactive exception handling for `txo.executeAndAwait(block)`
 

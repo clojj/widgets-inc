@@ -1,4 +1,4 @@
-package com.winc
+package com.winc.product
 
 import archunit.extensions.topFuns
 import com.tngtech.archunit.base.DescribedPredicate
@@ -15,69 +15,66 @@ import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Test
 
 @AnalyzeClasses(
-    packages = ["com.winc.order"],
+    packages = ["com.winc.product"],
     importOptions = [ImportOption.DoNotIncludeJars::class, ImportOption.DoNotIncludeTests::class]
 )
 class ArchitectureTest {
 
-    private val domainPortIn = "domain.port.in"
     private val domainModel = "domain.model"
     private val domainService = "domain.service"
-    private val application = "application"
-    private val adapter = "adapter"
 
-    private val orderBoundedContext = "com.winc.order"
+    private val boundedContext = "com.winc.product"
 
-    // TODO enable after extracting packages other than orderBoundedContext
+    // TODO enable after extracting packages other than boundedContext
     // TODO track ArchUnit issue #222 and PR https://github.com/TNG/ArchUnit/pull/278
     @ArchTest
-    val `all packages in order BC` =
+    val `all packages in BC` =
         ArchRuleDefinition.classes().that()
-            .resideOutsideOfPackage("$orderBoundedContext..").should()
+            .resideOutsideOfPackage("$boundedContext..").should()
             .containNumberOfElements(DescribedPredicate.equalTo(0))
 
     @ArchTest
     val itIsAnOnion: OnionArchitecture =
         onionArchitecture()
-            .adapter("infra", "$orderBoundedContext.infra..")
-            .adapter("cli", "$orderBoundedContext.$adapter.cli..")
-            .adapter("rest", "$orderBoundedContext.$adapter.rest..")
-            .adapter("persistence", "$orderBoundedContext.$adapter.persistence..")
-            .applicationServices("$orderBoundedContext.$application.service..")
-            .domainModels("$orderBoundedContext.$domainModel..")
-            .domainServices("$orderBoundedContext.$domainService..")
-            .domainServices("$orderBoundedContext.$domainPortIn..")
+            .adapter("rest", "$boundedContext.adapter.rest..")
+            .adapter("persistence", "$boundedContext.adapter.persistence..")
+            .applicationServices("$boundedContext.application.service..")
+            .applicationServices("$boundedContext.application.port.in..")
+            .applicationServices("$boundedContext.application.port.out..")
+            .domainModels("$boundedContext.$domainModel..")
+            .domainServices("$boundedContext.$domainService..")
     // .withOptionalLayers(true)
 
     @ArchTest
     val `Entities reside in designated package` =
         ArchRuleDefinition.classes().that().haveSimpleNameEndingWith("Entity")
-            .should().resideInAPackage("com.winc.order.adapter.persistence.r2dbc") // TODO bounded context as separate package
-    // .should().resideInAPackage("$orderBoundedContext.$adapter.persistence.r2dbc..")
+            .should().resideInAPackage("$boundedContext.adapter.out.persistence.r2dbc")
 
     @ArchTest
     val `DDD Entities reside in designated package` =
         ArchRuleDefinition.classes().that()
             .areAnnotatedWith(DDD.Entity::class.java)
-            .should().resideInAPackage("$orderBoundedContext.$domainModel..")
+            .should().resideInAPackage("$boundedContext.$domainModel..")
 
     @ArchTest
     val `DDD application services (UseCases) reside in designated package` =
         ArchRuleDefinition.methods().that()
             .areAnnotatedWith(DDD.UseCase::class.java)
-            .should().beDeclaredInClassesThat().resideInAnyPackage("$orderBoundedContext.$application..", "$orderBoundedContext.$domainPortIn..")
+            .should().beDeclaredInClassesThat().resideInAnyPackage(
+                "$boundedContext.application.port.in.."
+            )
 
     @ArchTest
     val `DDD domain services reside in designated package` =
         ArchRuleDefinition.methods().that()
             .areAnnotatedWith(DDD.DomainService::class.java)
-            .should().beDeclaredInClassesThat().resideInAPackage("$orderBoundedContext.$domainService..")
+            .should().beDeclaredInClassesThat().resideInAPackage("$boundedContext.$domainService..")
 
     @ArchTest
     val `DDD ValueObjects reside in designated package and have private constructors` =
         ArchRuleDefinition.classes().that()
             .areAnnotatedWith(ValueObject::class.java)
-            .should().resideInAPackage("$orderBoundedContext.$domainModel.value..")
+            .should().resideInAPackage("$boundedContext.$domainModel..")
             .andShould().haveOnlyPrivateConstructors()
 
     @Test
@@ -85,7 +82,7 @@ class ArchitectureTest {
         ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS)
-            .importPackages(orderBoundedContext)
+            .importPackages(boundedContext)
             .topFuns()
             .map {
                 println("topFun: $it")
