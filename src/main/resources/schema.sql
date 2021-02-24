@@ -1,10 +1,10 @@
-create table order_entity
+create table product_entity
 (
-    uuid   uuid default gen_random_uuid() not null
-        constraint order_entity_pkey
+    uuid uuid default gen_random_uuid() not null
+        constraint product_entity_pkey
             primary key,
-    code   varchar,
-    amount integer
+    code varchar,
+    name varchar
 );
 
-alter table order_entity owner to postgres;
+alter table product_entity owner to postgres;

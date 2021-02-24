@@ -42,10 +42,9 @@ public class HexagonalArchitecture extends ArchitectureElement {
   }
 
   private void domainDoesNotDependOnOtherPackages(JavaClasses classes) {
-    denyAnyDependency(
-        this.domainPackages, Collections.singletonList(adapters.basePackage), classes);
-    denyAnyDependency(
-        this.domainPackages, Collections.singletonList(applicationLayer.basePackage), classes);
+    denyAnyDependency(this.domainPackages, Collections.singletonList(adapters.basePackage), classes);
+    denyAnyDependency(this.domainPackages, Collections.singletonList(applicationLayer.basePackage), classes);
+    denyAnyDependency(this.domainPackages, Collections.singletonList(configurationPackage), classes);
   }
 
   public void check(JavaClasses classes) {

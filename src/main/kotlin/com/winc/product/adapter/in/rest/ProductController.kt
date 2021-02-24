@@ -1,9 +1,10 @@
 package com.winc.product.adapter.`in`.rest
 
-import arrow.core.Either
-import arrow.core.Nel
 import com.winc.product.application.service.CreateProductCommand
 import com.winc.product.config.CreateProduct
+import com.winc.product.config.ErrorResponse
+import com.winc.product.config.PayloadException
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,15 +16,25 @@ import java.util.*
 class ProductController(val createProduct: CreateProduct) {
 
     @PostMapping("/products", consumes = ["application/json"], produces = ["application/json"])
-    suspend fun create(@RequestBody product: NewProduct): Either<Nel<String>, UUID> =
+    suspend fun create(@RequestBody productDTO: NewProductDTO): ResponseEntity<ProductCreatedDTO> =
         createProduct.run {
 
             // TODO authorisation with DDD
             println(retrieveAuthorities())
 
-            CreateProductCommand(product.code, product.name).exec()
+            CreateProductCommand(productDTO.code, productDTO.name)
+                .execute()
+                .fold({
+                    throw PayloadException(ErrorResponse("$it via global handler"))
+                }) {
+                    ResponseEntity.ok(ProductCreatedDTO(it))
+                }
         }
 }
+
+data class NewProductDTO(val code: String, val name: String)
+
+data class ProductCreatedDTO(val orderId: UUID)
 
 private suspend fun retrieveAuthorities(): List<String> {
     println("retrieve authorities in thread ${Thread.currentThread().name} with strategy ${SecurityContextHolder.getContextHolderStrategy().javaClass.simpleName}")
@@ -38,5 +49,3 @@ private suspend fun retrieveAuthorities(): List<String> {
     }
     return emptyList()
 }
-
-data class NewProduct(val code: String, val name: String)

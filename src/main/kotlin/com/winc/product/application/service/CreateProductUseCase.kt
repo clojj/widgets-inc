@@ -13,7 +13,8 @@ interface CreateProductUseCase {
     val transact: Transact<Either<Nel<String>, UUID>>
     val saveProduct: SaveProduct
 
-    suspend fun CreateProductCommand.exec(): Either<Nel<String>, UUID> =
+    // TODO general sealed hierarchy for error type (ValidationErrors is just one choice-type)
+    suspend fun CreateProductCommand.execute(): Either<Nel<String>, UUID> =
         transact {
             either {
                 val product = Product.of(code, name).bind()
@@ -24,4 +25,5 @@ interface CreateProductUseCase {
 
 data class CreateProductCommand(val code: String, val name: String)
 
+// TODO return event
 data class ProductCreatedEvent(val productId: UUID)

@@ -2,8 +2,6 @@ package com.winc.product.config
 
 import arrow.core.Either
 import arrow.core.Nel
-import com.winc.order.adapter.rest.ErrorResponse
-import com.winc.order.adapter.rest.PayloadException
 import com.winc.product.adapter.out.persistence.r2dbc.ProductRepository
 import com.winc.product.adapter.out.persistence.r2dbc.saveProductAdapter
 import com.winc.product.adapter.out.persistence.tx.writeTransaction
@@ -12,6 +10,7 @@ import com.winc.product.application.port.out.SaveProduct
 import com.winc.product.application.service.CreateProductUseCase
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -30,23 +29,28 @@ import java.util.*
 
 @Component
 class CreateProduct(
-    private val connectionFactory: ConnectionFactory,
-    private val productRepository: ProductRepository
+    @Qualifier("connectionFactory") connectionFactory: ConnectionFactory,
+    productRepository: ProductRepository
 ) : CreateProductUseCase {
     override val transact: Transact<Either<Nel<String>, UUID>> = writeTransaction(connectionFactory)
     override val saveProduct: SaveProduct = saveProductAdapter(productRepository)
 }
+
+data class ErrorResponse(val error: String)
+
+data class PayloadException(val errorResponse: ErrorResponse) : Throwable()
 
 @ControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(value = [Throwable::class])
     fun handleException(throwable: Throwable): ResponseEntity<ErrorResponse> =
         when (throwable) {
-            is NestedServletException -> when (throwable.cause) {
-                is PayloadException -> ResponseEntity.badRequest()
-                    .body(((throwable.cause) as PayloadException).errorResponse)
-                else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
-            }
+            is NestedServletException ->
+                when (throwable.cause) {
+                    is PayloadException -> ResponseEntity.badRequest()
+                        .body(((throwable.cause) as PayloadException).errorResponse)
+                    else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
+                }
             else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
         }
 }

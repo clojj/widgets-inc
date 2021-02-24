@@ -1,7 +1,7 @@
 
-## move all code from order to product, then delete order
-
 ## verify com.winc.archunit.HexagonalArchitecture from buckpal
+
+## onion: how to integrate configuration package ?
 
 ## ProductController: AuditorAware with Spring Security
 
@@ -10,8 +10,6 @@
 ## "error json-response only via ExceptionHandler ?"
 
 ## flyway DB setup
-
-## onion: violation for dependencies between adapters ?
 
 ## domain @Aggregate with Command -> State -> (State, [Event])
 

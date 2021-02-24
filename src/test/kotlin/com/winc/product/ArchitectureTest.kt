@@ -36,8 +36,8 @@ class ArchitectureTest {
     @ArchTest
     val itIsAnOnion: OnionArchitecture =
         onionArchitecture()
-            .adapter("rest", "$boundedContext.adapter.rest..")
-            .adapter("persistence", "$boundedContext.adapter.persistence..")
+            .adapter("rest", "$boundedContext.adapter.in.rest..")
+            .adapter("persistence", "$boundedContext.adapter.out.persistence..")
             .applicationServices("$boundedContext.application.service..")
             .applicationServices("$boundedContext.application.port.in..")
             .applicationServices("$boundedContext.application.port.out..")

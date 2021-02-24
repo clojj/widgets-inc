@@ -1,8 +1,0 @@
-###
-POST http://admin:admin@localhost:8080/products
-Content-Type: application/json
-
-{
-  "code": "A123",
-  "name": "a product"
-}
