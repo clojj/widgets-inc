@@ -18,10 +18,10 @@ inline class ProductCode private constructor(val value: String) {
                 pattern("^[A-Z]{1}\\d{3,5}")
             }
         }
-        fun of(string: String): Validated<Nel<String>, ProductCode> = validate(ProductCode(string)).asValidated()
+        fun of(string: String): Validated<Nel<String>, ProductCode> = validate(ProductCode(string)).asValidated("ProductCode")
     }
 }
 
 // arrow adapter
-private fun <T> ValidationResult<T>.asValidated() =
-    if (this is Valid) this.value.valid() else Nel.fromListUnsafe(this.errors.map { "VALIDATION ERROR: ${it.message} in ${it.dataPath}" }).invalid()
+private fun <T> ValidationResult<T>.asValidated(value: String) =
+    if (this is Valid) this.value.valid() else Nel.fromListUnsafe(this.errors.map { "$value${it.dataPath} : ${it.message}" }).invalid()

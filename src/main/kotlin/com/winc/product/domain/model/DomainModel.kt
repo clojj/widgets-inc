@@ -47,5 +47,5 @@ inline class WidgetCode private constructor(val code: String) {
 
 // arrow adapter
 private fun <T> ValidationResult<T>.asValidated() =
-    if (this is Valid) this.value.valid() else Nel.fromListUnsafe(this.errors.map { "VALIDATION ERROR: ${it.message} in ${it.dataPath}" }).invalid()
+    if (this is Valid) this.value.valid() else Nel.fromListUnsafe(this.errors.map { "${it.message} in ${it.dataPath}" }).invalid()
 
