@@ -1,20 +1,12 @@
 package com.winc.product.config
 
-import arrow.core.Either
-import arrow.core.Nel
-import com.winc.product.adapter.out.persistence.r2dbc.ProductRepository
-import com.winc.product.adapter.out.persistence.r2dbc.saveProductAdapter
-import com.winc.product.adapter.out.persistence.tx.writeTransaction
-import com.winc.product.application.port.`in`.Transact
-import com.winc.product.application.port.out.SaveProduct
-import com.winc.product.application.service.CreateProductUseCase
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
+import org.springframework.r2dbc.connection.R2dbcTransactionManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -22,18 +14,22 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import org.springframework.transaction.TransactionDefinition
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.util.NestedServletException
-import java.util.*
+
+val transactionDefinition: TransactionDefinition = object : TransactionDefinition {
+    override fun getIsolationLevel(): Int {
+        return TransactionDefinition.ISOLATION_READ_COMMITTED
+    }
+}
 
 @Component
-class CreateProduct(
-    @Qualifier("connectionFactory") connectionFactory: ConnectionFactory,
-    productRepository: ProductRepository
-) : CreateProductUseCase {
-    override val transact: Transact<Either<Nel<String>, UUID>> = writeTransaction(connectionFactory)
-    override val saveProduct: SaveProduct = saveProductAdapter(productRepository)
+class Configurations(val connectionFactory: ConnectionFactory) {
+    @Bean
+    fun transactionalOperator() = TransactionalOperator.create(R2dbcTransactionManager(connectionFactory), transactionDefinition)
 }
 
 data class ErrorResponse(val error: String)

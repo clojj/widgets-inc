@@ -11,7 +11,7 @@ public class HexagonalArchitecture extends ArchitectureElement {
   private Adapters adapters;
   private ApplicationLayer applicationLayer;
   private String configurationPackage;
-  private List<String> domainPackages = new ArrayList<>();
+  private final List<String> domainPackages = new ArrayList<>();
 
   public static HexagonalArchitecture boundedContext(String basePackage) {
     return new HexagonalArchitecture(basePackage);

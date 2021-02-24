@@ -6,25 +6,25 @@ import org.junit.jupiter.api.Test;
 
 class DependencyRuleTests {
 
-	@Test
-	void validateProductContextArchitecture() {
-		HexagonalArchitecture.boundedContext("com.winc.product")
+    @Test
+    void validateProductContextArchitecture() {
+        HexagonalArchitecture.boundedContext("com.winc.product")
 
-				.withDomainLayer("domain")
+                .withDomainLayer("domain")
 
-				.withAdaptersLayer("adapter")
-				.incoming("in.rest")
-				.outgoing("out.persistence")
-				.and()
+                .withAdaptersLayer("adapter")
+                .incoming("in")
+                .outgoing("out")
+                .and()
 
-				.withApplicationLayer("application")
-				.services("service")
-				.incomingPorts("port.in")
-				.outgoingPorts("port.out")
-				.and()
+                .withApplicationLayer("application")
+                .services("service")
+                .incomingPorts("port.in")
+                .outgoingPorts("port.out")
+                .and()
 
-				.withConfiguration("config")
-				.check(new ClassFileImporter().importPackages("com.winc.product.."));
-	}
+                .withConfiguration("config")
+                .check(new ClassFileImporter().importPackages("com.winc.product"));
+    }
 
 }
