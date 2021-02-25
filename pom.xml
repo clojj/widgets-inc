@@ -95,7 +95,7 @@
 
         <dependency>
             <groupId>io.arrow-kt</groupId>
-            <artifactId>arrow-fx</artifactId>
+            <artifactId>arrow-core</artifactId>
             <version>0.12.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

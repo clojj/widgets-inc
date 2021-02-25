@@ -3,6 +3,10 @@
 
 ## onion: how to integrate configuration package ?
 
+## Arrow dependencies... try also arrow-fx-coroutines
+![image](Arrow-0.12-dependencies.png)
+
+
 ## ProductController: AuditorAware with Spring Security
 
 ## find non-blocking reactive exception handling for `txo.executeAndAwait(block)`
