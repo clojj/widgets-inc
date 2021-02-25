@@ -13,14 +13,14 @@ class DependencyRuleTests {
                 .withDomainLayer("domain")
 
                 .withAdaptersLayer("adapter")
-                .incoming("in")
-                .outgoing("out")
+                .incoming("inbound")
+                .outgoing("outbound")
                 .and()
 
                 .withApplicationLayer("application")
                 .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
+                .incomingPorts("port.inbound")
+                .outgoingPorts("port.outbound")
                 .and()
 
                 .withConfiguration("config")

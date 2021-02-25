@@ -1,4 +1,4 @@
-package com.winc.product.application.port.out
+package com.winc.product.application.port.outbound
 
 import arrow.core.Either
 import arrow.core.Nel

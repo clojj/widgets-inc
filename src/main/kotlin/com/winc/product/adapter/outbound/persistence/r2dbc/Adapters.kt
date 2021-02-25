@@ -1,10 +1,10 @@
-package com.winc.product.adapter.out.persistence.r2dbc
+package com.winc.product.adapter.outbound.persistence.r2dbc
 
 import arrow.core.left
 import arrow.core.nonEmptyListOf
 import arrow.core.right
-import com.winc.product.application.port.`in`.Transact
-import com.winc.product.application.port.out.SaveProduct
+import com.winc.product.application.port.inbound.Transact
+import com.winc.product.application.port.outbound.SaveProduct
 import ddd.HEXA
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
@@ -27,6 +27,6 @@ fun saveProductAdapter(productRepository: ProductRepository) : SaveProduct = { p
 @Repository
 interface ProductRepository : ReactiveCrudRepository<ProductEntity, UUID>
 
-fun <A> writeTransactionAdapter(transactionalOperator: TransactionalOperator): Transact<A> {
-    return { block -> transactionalOperator.executeAndAwait { tx -> block() } ?: TODO() }
+fun <A> transactionAdapter(txOperator: TransactionalOperator): Transact<A> {
+    return { block -> txOperator.executeAndAwait { tx -> block() } ?: TODO() }
 }

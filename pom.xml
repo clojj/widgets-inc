@@ -20,7 +20,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.4.30</kotlin.version>
+        <kotlin.version>1.4.31</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
     </properties>
@@ -166,6 +166,7 @@
                     <args>
                         <arg>-Xjsr305=strict</arg>
                         <arg>-Xinline-classes</arg>
+                        <arg>-Xuse-ir</arg>
                         <!--<arg>-Xexplicit-api=warning</arg>-->
                     </args>
                     <compilerPlugins>

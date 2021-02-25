@@ -1,3 +1,3 @@
-package com.winc.product.application.port.`in`
+package com.winc.product.application.port.inbound
 
 typealias Transact<R> = suspend (suspend () -> R) -> R

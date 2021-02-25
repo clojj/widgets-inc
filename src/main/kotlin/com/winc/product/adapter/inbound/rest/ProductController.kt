@@ -1,4 +1,4 @@
-package com.winc.product.adapter.`in`.rest
+package com.winc.product.adapter.inbound.rest
 
 import com.winc.product.application.service.CreateProductCommand
 import com.winc.product.config.CreateProduct

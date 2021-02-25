@@ -36,11 +36,11 @@ class ArchitectureTest {
     @ArchTest
     val itIsAnOnion: OnionArchitecture =
         onionArchitecture()
-            .adapter("rest", "$boundedContext.adapter.in.rest..")
-            .adapter("persistence", "$boundedContext.adapter.out.persistence..")
+            .adapter("rest", "$boundedContext.adapter.inbound.rest..")
+            .adapter("persistence", "$boundedContext.adapter.outbound.persistence..")
             .applicationServices("$boundedContext.application.service..")
-            .applicationServices("$boundedContext.application.port.in..")
-            .applicationServices("$boundedContext.application.port.out..")
+            .applicationServices("$boundedContext.application.port.inbound..")
+            .applicationServices("$boundedContext.application.port.outbound..")
             .domainModels("$boundedContext.$domainModel..")
             .domainServices("$boundedContext.$domainService..")
     // .withOptionalLayers(true)
@@ -48,7 +48,7 @@ class ArchitectureTest {
     @ArchTest
     val `Entities reside in designated package` =
         ArchRuleDefinition.classes().that().haveSimpleNameEndingWith("Entity")
-            .should().resideInAPackage("$boundedContext.adapter.out.persistence.r2dbc")
+            .should().resideInAPackage("$boundedContext.adapter.outbound.persistence.r2dbc")
 
     @ArchTest
     val `DDD Entities reside in designated package` =
@@ -61,7 +61,7 @@ class ArchitectureTest {
         ArchRuleDefinition.methods().that()
             .areAnnotatedWith(DDD.UseCase::class.java)
             .should().beDeclaredInClassesThat().resideInAnyPackage(
-                "$boundedContext.application.port.in.."
+                "$boundedContext.application.port.inbound.."
             )
 
     @ArchTest
