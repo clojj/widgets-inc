@@ -1,3 +1,7 @@
+## alternative without arrow: 
+https://github.com/fork-handles/forkhandles/tree/trunk/result4k
+https://youtu.be/pvYAQNT4o0I?t=2605
+https://youtu.be/pvYAQNT4o0I?t=2110
 
 ## verify com.winc.archunit.HexagonalArchitecture from buckpal
 
