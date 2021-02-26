@@ -4,6 +4,7 @@ import com.winc.product.application.service.CreateProductCommand
 import com.winc.product.config.CreateProduct
 import com.winc.product.config.ErrorResponse
 import com.winc.product.config.PayloadException
+import hexa.HEXA
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
+@HEXA.AdapterInbound
 @RestController
 class ProductController(val createProduct: CreateProduct) {
 

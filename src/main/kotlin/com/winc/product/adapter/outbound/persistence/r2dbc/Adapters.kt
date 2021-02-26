@@ -5,7 +5,7 @@ import arrow.core.nonEmptyListOf
 import arrow.core.right
 import com.winc.product.application.port.inbound.Transact
 import com.winc.product.application.port.outbound.SaveProduct
-import ddd.HEXA
+import hexa.HEXA
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
@@ -13,7 +13,7 @@ import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
 import java.util.*
 
-@HEXA.Adapter
+@HEXA.AdapterOutbound
 fun saveProductAdapter(productRepository: ProductRepository) : SaveProduct = { product ->
         val productEntity = ProductEntity(code = product.code.value, name = product.name)
         val entity = productRepository.save(productEntity).awaitFirst()

@@ -10,7 +10,7 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
 import com.tngtech.archunit.library.Architectures.OnionArchitecture
 import com.tngtech.archunit.library.Architectures.onionArchitecture
 import ddd.DDD
-import ddd.Pure
+import hexa.Pure
 import org.jmolecules.ddd.annotation.ValueObject
 import org.junit.jupiter.api.Test
 

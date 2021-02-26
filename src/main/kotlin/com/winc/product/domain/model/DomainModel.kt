@@ -1,20 +1,19 @@
 package com.winc.product.domain.model
 
-import arrow.core.*
+import arrow.core.Nel
+import arrow.core.Validated
 import arrow.core.Validated.Companion.invalidNel
+import arrow.core.nonEmptyList
+import arrow.core.valid
 import arrow.typeclasses.Semigroup
 import ddd.DDD
-import io.konform.validation.Valid
-import io.konform.validation.Validation
-import io.konform.validation.ValidationResult
-import io.konform.validation.jsonschema.pattern
-import org.jmolecules.ddd.annotation.ValueObject
+import hexa.HEXA
 
 inline val String.value: String
     get() = this
 
-// TODO as @Aggregate
-@DDD.Entity
+@HEXA.Domain
+@DDD.Entity // TODO as @Aggregate
 data class Product(val code: ProductCode, val name: String) {
 
     companion object {
@@ -31,21 +30,3 @@ data class Product(val code: ProductCode, val name: String) {
         }
     }
 }
-
-// TODO konform validations
-@ValueObject // only type + companion are public
-inline class WidgetCode private constructor(val code: String) {
-    companion object {
-        val validate = Validation<WidgetCode> {
-            WidgetCode::code {
-                pattern("^[A-Z]{1}\\d{3,5}")
-            }
-        }
-        fun of(string: String): Validated<Nel<String>, WidgetCode> = validate(WidgetCode(string)).asValidated()
-    }
-}
-
-// arrow adapter
-private fun <T> ValidationResult<T>.asValidated() =
-    if (this is Valid) this.value.valid() else Nel.fromListUnsafe(this.errors.map { "${it.message} in ${it.dataPath}" }).invalid()
-

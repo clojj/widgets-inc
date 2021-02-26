@@ -6,9 +6,12 @@ import arrow.core.computations.either
 import com.winc.product.application.port.inbound.Transact
 import com.winc.product.application.port.outbound.SaveProduct
 import com.winc.product.domain.model.Product
+import ddd.DDD
+import hexa.HEXA
 import java.util.*
 
-
+@DDD.ApplicationService
+@HEXA.Application
 interface CreateProductUseCase {
     val transact: Transact<Either<Nel<String>, UUID>>
     val saveProduct: SaveProduct
@@ -23,7 +26,9 @@ interface CreateProductUseCase {
         }
 }
 
+@DDD.Command
 data class CreateProductCommand(val code: String, val name: String)
 
 // TODO return event
+@DDD.Event
 data class ProductCreatedEvent(val productId: UUID)
