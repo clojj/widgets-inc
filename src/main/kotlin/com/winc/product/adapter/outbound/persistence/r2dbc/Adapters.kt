@@ -1,8 +1,8 @@
 package com.winc.product.adapter.outbound.persistence.r2dbc
 
+import arrow.core.Either.Companion.catch
 import arrow.core.left
 import arrow.core.nonEmptyListOf
-import arrow.core.right
 import com.winc.product.application.port.inbound.Transact
 import com.winc.product.application.port.outbound.SaveProduct
 import com.winc.product.application.port.outbound.UpdateProduct
@@ -15,24 +15,30 @@ import org.springframework.transaction.reactive.executeAndAwait
 import java.util.*
 
 @HEXA.AdapterOutbound
-fun saveProductAdapter(productRepository: ProductRepository) : SaveProduct = { product ->
-        if (product.uuid == null) {
-            // TODO catch exceptions
-            productRepository.save(product.toEntity()).awaitFirst().uuid!!.right()
-        } else {
-            nonEmptyListOf("can't save a new product with existing id: $product").left()
+fun saveProductAdapter(productRepository: ProductRepository): SaveProduct = { product ->
+    if (product.uuid == null) {
+        catch({
+            nonEmptyListOf("${it.message}")
+        }) {
+            productRepository.save(product.toEntity()).awaitFirst().uuid!!
         }
+    } else {
+        nonEmptyListOf("can't save a new product with existing id: $product").left()
     }
+}
 
 @HEXA.AdapterOutbound
-fun updateProductAdapter(productRepository: ProductRepository) : UpdateProduct = { product ->
-        if (product.uuid != null) {
-            // TODO catch exceptions
-            productRepository.save(product.toEntity()).awaitFirst().toDomain().right()
-        } else {
-            nonEmptyListOf("can't update a product without id: $product").left()
+fun updateProductAdapter(productRepository: ProductRepository): UpdateProduct = { product ->
+    if (product.uuid != null) {
+        catch({
+            nonEmptyListOf("${it.message}")
+        }) {
+            productRepository.save(product.toEntity()).awaitFirst().toDomain()
         }
+    } else {
+        nonEmptyListOf("can't update a product without id: $product").left()
     }
+}
 
 @Repository
 interface ProductRepository : ReactiveCrudRepository<ProductEntity, UUID>
