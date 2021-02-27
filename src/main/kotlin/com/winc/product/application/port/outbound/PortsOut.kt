@@ -8,3 +8,6 @@ import java.util.*
 
 @HEXA.PortOutbound
 typealias SaveProduct = suspend (product: Product) -> Either<Nel<String>, UUID>
+
+@HEXA.PortOutbound
+typealias UpdateProduct = suspend (product: Product) -> Either<Nel<String>, Product>

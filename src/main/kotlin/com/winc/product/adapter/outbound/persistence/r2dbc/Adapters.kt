@@ -5,6 +5,7 @@ import arrow.core.nonEmptyListOf
 import arrow.core.right
 import com.winc.product.application.port.inbound.Transact
 import com.winc.product.application.port.outbound.SaveProduct
+import com.winc.product.application.port.outbound.UpdateProduct
 import hexa.HEXA
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
@@ -15,12 +16,21 @@ import java.util.*
 
 @HEXA.AdapterOutbound
 fun saveProductAdapter(productRepository: ProductRepository) : SaveProduct = { product ->
-        val productEntity = ProductEntity(code = product.code.value, name = product.name)
-        val entity = productRepository.save(productEntity).awaitFirst()
-        if (entity?.uuid != null) {
-            entity.uuid!!.right()
+        if (product.uuid == null) {
+            // TODO catch exceptions
+            productRepository.save(product.toEntity()).awaitFirst().uuid!!.right()
         } else {
-            nonEmptyListOf("error inserting").left()
+            nonEmptyListOf("can't save a new product with existing id: $product").left()
+        }
+    }
+
+@HEXA.AdapterOutbound
+fun updateProductAdapter(productRepository: ProductRepository) : UpdateProduct = { product ->
+        if (product.uuid != null) {
+            // TODO catch exceptions
+            productRepository.save(product.toEntity()).awaitFirst().toDomain().right()
+        } else {
+            nonEmptyListOf("can't update a product without id: $product").left()
         }
     }
 

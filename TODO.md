@@ -1,3 +1,6 @@
+
+## catch exceptions from Spring Data Repositories
+
 ## alternative without arrow: 
 
 https://github.com/fork-handles/forkhandles/tree/trunk/result4k
@@ -8,11 +11,12 @@ https://youtu.be/pvYAQNT4o0I?t=2110
 
 ## verify com.winc.archunit.HexagonalArchitecture from buckpal
 
+## explore jmolecules + jmolecules-integrations
+
 ## onion: how to integrate configuration package ?
 
 ## Arrow dependencies... try also arrow-fx-coroutines
 ![image](Arrow-0.12-dependencies.png)
-
 
 ## ProductController: AuditorAware with Spring Security
 

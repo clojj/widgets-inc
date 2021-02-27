@@ -8,13 +8,14 @@ import arrow.core.valid
 import arrow.typeclasses.Semigroup
 import ddd.DDD
 import hexa.HEXA
+import java.util.*
 
 inline val String.value: String
     get() = this
 
 @HEXA.Domain
 @DDD.Entity // TODO as @Aggregate
-data class Product(val code: ProductCode, val name: String) {
+data class Product(val code: ProductCode, val name: String, val uuid: UUID? = null) {
 
     companion object {
         fun validateName(name: String) =

@@ -10,7 +10,7 @@ import ddd.DDD
 import hexa.HEXA
 import java.util.*
 
-@DDD.ApplicationService
+@DDD.UseCase
 @HEXA.Application
 interface CreateProductUseCase {
     val transact: Transact<Either<Nel<String>, UUID>>
