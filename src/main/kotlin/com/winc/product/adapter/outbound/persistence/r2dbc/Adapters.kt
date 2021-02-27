@@ -1,7 +1,6 @@
 package com.winc.product.adapter.outbound.persistence.r2dbc
 
 import arrow.core.Either.Companion.catch
-import arrow.core.left
 import com.winc.product.application.port.inbound.Transact
 import com.winc.product.application.port.outbound.SaveProduct
 import com.winc.product.application.port.outbound.UpdateProduct
@@ -15,28 +14,20 @@ import org.springframework.transaction.reactive.executeAndAwait
 import java.util.*
 
 @HEXA.AdapterOutbound
-fun saveProductAdapter(productRepository: ProductRepository): SaveProduct = { product ->
-    if (product.uuid == null) {
-        catch({
-            PortOutboundError("${it.message}")
-        }) {
-            productRepository.save(product.toEntity()).awaitFirst().uuid!!
-        }
-    } else {
-        PortOutboundError("can't save a new product with existing id: $product").left()
+fun saveProductAdapter(productRepository: ProductRepository): SaveProduct = { newProduct ->
+    catch({
+        PortOutboundError("${it.message}")
+    }) {
+        productRepository.save(newProduct.toEntity()).awaitFirst().toDomain()
     }
 }
 
 @HEXA.AdapterOutbound
-fun updateProductAdapter(productRepository: ProductRepository): UpdateProduct = { product ->
-    if (product.uuid != null) {
-        catch({
-            PortOutboundError("${it.message}")
-        }) {
-            productRepository.save(product.toEntity()).awaitFirst().toDomain()
-        }
-    } else {
-        PortOutboundError("can't update a product without id: $product").left()
+fun updateProductAdapter(productRepository: ProductRepository): UpdateProduct = { validProduct ->
+    catch({
+        PortOutboundError("${it.message}")
+    }) {
+        productRepository.save(validProduct.toEntity()).awaitFirst().toDomain()
     }
 }
 

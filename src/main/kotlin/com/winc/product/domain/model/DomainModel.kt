@@ -12,8 +12,12 @@ import hexa.HEXA
 import java.util.*
 
 @HEXA.Domain
-@DDD.Entity // TODO as @Aggregate
-data class Product(val code: ProductCode, val name: String, val uuid: UUID? = null) {
+@DDD.Aggregate
+sealed class Product {
+
+    data class NewProduct(val code: ProductCode, val name: String) : Product()
+
+    data class ValidProduct(val uuid: UUID, val code: ProductCode, val name: String) : Product()
 
     companion object {
         private fun validateName(name: String) =
@@ -22,14 +26,15 @@ data class Product(val code: ProductCode, val name: String, val uuid: UUID? = nu
             else
                 name.valid()
 
-        fun of(code: String, name: String): Validated<Error, Product> {
+        fun <T : Product> of(code: String, name: String, block: (ProductCode, String) -> T): Validated<Error, T> {
             val productCode: Validated<Nel<String>, ProductCode> = ProductCode.of(code)
             val validatedName: Validated<Nel<String>, String> = validateName(name)
             return Validated.mapN(Semigroup.nonEmptyList(), productCode, validatedName) { code_, name_ ->
-                Product(code_, name_)
+                block(code_, name_)
             }.mapLeft { ValidationError(it) }
         }
     }
+
 }
 
 sealed class Error {

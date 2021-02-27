@@ -17,7 +17,7 @@ import java.util.*
 class ProductController(val createProduct: CreateProduct) {
 
     @PostMapping("/products", consumes = ["application/json"], produces = ["application/json"])
-    suspend fun create(@RequestBody productDTO: NewProductDTO): ResponseEntity<ProductCreatedDTO> =
+    suspend fun create(@RequestBody productDTO: NewProductDTO): ResponseEntity<ProductDTO> =
         createProduct.run {
 
             // TODO authorisation with DDD
@@ -28,14 +28,14 @@ class ProductController(val createProduct: CreateProduct) {
                 .fold({
                     throw PayloadException(it)
                 }) {
-                    ResponseEntity.ok(ProductCreatedDTO(it))
+                    ResponseEntity.ok(ProductDTO(it.uuid, it.code.value, it.name))
                 }
         }
 }
 
 data class NewProductDTO(val code: String, val name: String)
 
-data class ProductCreatedDTO(val orderId: UUID)
+data class ProductDTO(val orderId: UUID, val code: String, val name: String)
 
 private suspend fun retrieveAuthorities(): List<String> {
     println("retrieve authorities in thread ${Thread.currentThread().name} with strategy ${SecurityContextHolder.getContextHolderStrategy().javaClass.simpleName}")
