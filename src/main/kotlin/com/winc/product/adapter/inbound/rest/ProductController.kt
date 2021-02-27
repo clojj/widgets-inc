@@ -2,7 +2,6 @@ package com.winc.product.adapter.inbound.rest
 
 import com.winc.product.application.service.CreateProductCommand
 import com.winc.product.config.CreateProduct
-import com.winc.product.config.ErrorResponse
 import com.winc.product.config.PayloadException
 import hexa.HEXA
 import org.springframework.http.ResponseEntity
@@ -27,7 +26,7 @@ class ProductController(val createProduct: CreateProduct) {
             CreateProductCommand(productDTO.code, productDTO.name)
                 .execute()
                 .fold({
-                    throw PayloadException(ErrorResponse("$it via global handler"))
+                    throw PayloadException(it)
                 }) {
                     ResponseEntity.ok(ProductCreatedDTO(it))
                 }

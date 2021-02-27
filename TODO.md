@@ -1,13 +1,11 @@
+## flyway DB setup
 
-## catch exceptions from Spring Data Repositories
+## "error json-response only via ExceptionHandler ?"
 
 ## alternative without arrow: 
-
-https://github.com/fork-handles/forkhandles/tree/trunk/result4k
-
-https://youtu.be/pvYAQNT4o0I?t=2605
-
-https://youtu.be/pvYAQNT4o0I?t=2110
+- https://github.com/fork-handles/forkhandles/tree/trunk/result4k
+- https://youtu.be/pvYAQNT4o0I?t=2605
+- https://youtu.be/pvYAQNT4o0I?t=2110
 
 ## verify com.winc.archunit.HexagonalArchitecture from buckpal
 
@@ -20,11 +18,7 @@ https://youtu.be/pvYAQNT4o0I?t=2110
 
 ## ProductController: AuditorAware with Spring Security
 
-## find non-blocking reactive exception handling for `txo.executeAndAwait(block)`
-
-## "error json-response only via ExceptionHandler ?"
-
-## flyway DB setup
+## is reactive exception handling non-blocking ? `txo.executeAndAwait(block)`
 
 ## domain @Aggregate with Command -> State -> (State, [Event])
 

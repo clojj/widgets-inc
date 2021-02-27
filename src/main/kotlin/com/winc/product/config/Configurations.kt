@@ -1,5 +1,6 @@
 package com.winc.product.config
 
+import com.winc.product.domain.model.Error.InfraError
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,23 +15,22 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.util.NestedServletException
+import com.winc.product.domain.model.Error as ProductError
 
-data class ErrorResponse(val error: String)
-
-data class PayloadException(val errorResponse: ErrorResponse) : Throwable()
+data class PayloadException(val error: ProductError) : Throwable()
 
 @ControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(value = [Throwable::class])
-    fun handleException(throwable: Throwable): ResponseEntity<ErrorResponse> =
+    fun handleException(throwable: Throwable): ResponseEntity<ProductError> =
         when (throwable) {
             is NestedServletException ->
                 when (throwable.cause) {
                     is PayloadException -> ResponseEntity.badRequest()
-                        .body(((throwable.cause) as PayloadException).errorResponse)
-                    else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
+                        .body(((throwable.cause) as PayloadException).error)
+                    else -> ResponseEntity.badRequest().body(InfraError(throwable.message ?: "UNKNOWN ERROR"))
                 }
-            else -> ResponseEntity.badRequest().body(ErrorResponse(throwable.message ?: "unknown error"))
+            else -> ResponseEntity.badRequest().body(InfraError(throwable.message ?: "UNKNOWN ERROR"))
         }
 }
 
