@@ -1,8 +1,7 @@
 ## flyway DB setup
 
-## "error json-response only via ExceptionHandler ?"
-
-## alternative without arrow: 
+## alternative without Arrow: 
+diverse result-monad libs on Github
 - https://github.com/fork-handles/forkhandles/tree/trunk/result4k
 - https://youtu.be/pvYAQNT4o0I?t=2605
 - https://youtu.be/pvYAQNT4o0I?t=2110

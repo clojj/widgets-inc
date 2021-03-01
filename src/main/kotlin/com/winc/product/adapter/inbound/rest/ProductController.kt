@@ -1,8 +1,11 @@
 package com.winc.product.adapter.inbound.rest
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.winc.product.application.service.CreateProductCommand
 import com.winc.product.config.CreateProduct
-import com.winc.product.config.PayloadException
+import com.winc.product.domain.model.Error
 import hexa.HEXA
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContext
@@ -17,7 +20,7 @@ import java.util.*
 class ProductController(val createProduct: CreateProduct) {
 
     @PostMapping("/products", consumes = ["application/json"], produces = ["application/json"])
-    suspend fun create(@RequestBody productDTO: NewProductDTO): ResponseEntity<ProductDTO> =
+    suspend fun create(@RequestBody productDTO: NewProductDTO): Either<ResponseEntity<Error>, ResponseEntity<ProductDTO>> =
         createProduct.run {
 
             // TODO authorisation with DDD
@@ -26,9 +29,9 @@ class ProductController(val createProduct: CreateProduct) {
             CreateProductCommand(productDTO.code, productDTO.name)
                 .execute()
                 .fold({
-                    throw PayloadException(it)
+                    ResponseEntity.status(400).body(it).left()
                 }) {
-                    ResponseEntity.ok(ProductDTO(it.uuid, it.code.value, it.name))
+                    ResponseEntity.ok(ProductDTO(it.uuid, it.code.value, it.name)).right()
                 }
         }
 }
