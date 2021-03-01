@@ -9,7 +9,6 @@ import arrow.typeclasses.Semigroup
 import com.winc.product.domain.model.Error.ValidationError
 import ddd.DDD
 import hexa.HEXA
-import java.util.*
 
 @HEXA.Domain
 @DDD.Aggregate
@@ -17,7 +16,7 @@ sealed class Product {
 
     data class NewProduct(val code: ProductCode, val name: String) : Product()
 
-    data class ValidProduct(val uuid: UUID, val code: ProductCode, val name: String) : Product()
+    data class ValidProduct(val id: Long, val code: ProductCode, val name: String) : Product()
 
     companion object {
         private fun validateName(name: String) =

@@ -5,24 +5,23 @@ import com.winc.product.domain.model.Product.ValidProduct
 import com.winc.product.domain.model.ProductCode
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
-import java.util.*
 
-@Table
-data class ProductEntity(@Id var uuid: UUID? = null, val code: String, val name: String)
+@Table("winc_product.product_entity")
+data class ProductEntity(@Id var id: Long? = null, val code: String, val name: String)
 
 fun NewProduct.toEntity() =
     ProductEntity(code = code.value, name = name)
 
 fun ValidProduct.toEntity() =
-    ProductEntity(uuid, code.value, name)
+    ProductEntity(id, code.value, name)
 
 fun ProductEntity.toDomain(): ValidProduct =
-    if (uuid == null)
+    if (id == null)
         throw TODO("uuid is null")
     else
         ProductCode.of(code)
             .fold({
                 throw TODO("invalid database code")
             }) {
-                ValidProduct(uuid = uuid!!, code = it, name = name)
+                ValidProduct(id = id!!, code = it, name = name)
             }

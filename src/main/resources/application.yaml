@@ -6,10 +6,18 @@ logging:
 
 
 spring:
+  datasource:
+    schema: winc_product
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/postgres
-    password: mysecretpassword
-    username: postgres
+    url: r2dbc:pool:mssql://localhost:1433
+    password: sqlserver2019!
+    username: SA
+    name: winc
+
+
+#    url: r2dbc:postgresql://localhost:5432/postgres
+#    password: mysecretpassword
+#    username: postgres
 
 #spring.r2dbc.url=r2dbc:${db.url}
 #spring.r2dbc.username=${db.user}

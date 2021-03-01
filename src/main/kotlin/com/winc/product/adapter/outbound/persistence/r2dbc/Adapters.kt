@@ -11,7 +11,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
-import java.util.*
 
 @HEXA.AdapterOutbound
 fun saveProductAdapter(productRepository: ProductRepository): SaveProduct = { newProduct ->
@@ -32,7 +31,7 @@ fun updateProductAdapter(productRepository: ProductRepository): UpdateProduct = 
 }
 
 @Repository
-interface ProductRepository : ReactiveCrudRepository<ProductEntity, UUID>
+interface ProductRepository : ReactiveCrudRepository<ProductEntity, Long>
 
 fun <A> transactionAdapter(txOperator: TransactionalOperator): Transact<A> {
     return { block -> txOperator.executeAndAwait { tx -> block() } ?: TODO() }

@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 
 @HEXA.AdapterInbound
 @RestController
@@ -28,14 +27,14 @@ class ProductController(val createProduct: CreateProduct) {
                 .fold({
                     throw PayloadException(it)
                 }) {
-                    ResponseEntity.ok(ProductDTO(it.uuid, it.code.value, it.name))
+                    ResponseEntity.ok(ProductDTO(it.code.value, it.name))
                 }
         }
 }
 
 data class NewProductDTO(val code: String, val name: String)
 
-data class ProductDTO(val orderId: UUID, val code: String, val name: String)
+data class ProductDTO(val code: String, val name: String)
 
 private suspend fun retrieveAuthorities(): List<String> {
     println("retrieve authorities in thread ${Thread.currentThread().name} with strategy ${SecurityContextHolder.getContextHolderStrategy().javaClass.simpleName}")
