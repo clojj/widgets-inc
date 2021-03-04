@@ -3,6 +3,8 @@ package com.winc.infra
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.boot.Banner
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.flyway.FlywayProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -14,6 +16,7 @@ import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.reactive.TransactionalOperator
 
 @SpringBootApplication
+@EnableConfigurationProperties(FlywayProperties::class)
 @EnableWebSecurity
 @ComponentScan(basePackages = ["com.winc.product"])
 @EnableR2dbcRepositories(basePackages = ["com.winc.*.adapter.*.persistence.r2dbc"])

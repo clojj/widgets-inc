@@ -11,6 +11,7 @@ spring:
     password: mysecretpassword
     username: postgres
 
-#spring.r2dbc.url=r2dbc:${db.url}
-#spring.r2dbc.username=${db.user}
-#spring.r2dbc.password=${db.password}
+  flyway:
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: mysecretpassword
+    user: postgres
