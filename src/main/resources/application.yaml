@@ -8,10 +8,10 @@ logging:
 spring:
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/postgres
-    password: mysecretpassword
     username: postgres
+    password: mysecretpassword
 
   flyway:
     url: jdbc:postgresql://localhost:5432/postgres
-    password: mysecretpassword
     user: postgres
+    password: mysecretpassword
