@@ -5,9 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.winc.product.domain.model.Error.InfraError
-import org.flywaydb.core.Flyway
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.flyway.FlywayProperties
 import org.springframework.boot.jackson.JsonComponent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,19 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import com.winc.product.domain.model.Error as ProductError
-
-@Configuration
-class FlywayConfig(private val flywayProperties: FlywayProperties) {
-    @Bean(initMethod = "migrate")
-    fun flyway(): Flyway =
-        with(flywayProperties) {
-            Flyway(
-                Flyway.configure()
-                    .baselineOnMigrate(true)
-                    .dataSource(url, user, password)
-            )
-        }
-}
 
 @JsonComponent
 class EitherSerializer<L, R> : JsonSerializer<Either<L, R>>() {

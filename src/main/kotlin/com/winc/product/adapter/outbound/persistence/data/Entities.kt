@@ -1,4 +1,4 @@
-package com.winc.product.adapter.outbound.persistence.r2dbc
+package com.winc.product.adapter.outbound.persistence.data
 
 import com.winc.product.domain.model.Product.NewProduct
 import com.winc.product.domain.model.Product.ValidProduct

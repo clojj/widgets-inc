@@ -48,7 +48,7 @@ class ArchitectureTest {
     @ArchTest
     val `Entities reside in designated package` =
         ArchRuleDefinition.classes().that().haveSimpleNameEndingWith("Entity")
-            .should().resideInAPackage("$boundedContext.adapter.outbound.persistence.r2dbc")
+            .should().resideInAPackage("$boundedContext.adapter.outbound.persistence.data")
 
     @ArchTest
     val `DDD Entities reside in designated package` =

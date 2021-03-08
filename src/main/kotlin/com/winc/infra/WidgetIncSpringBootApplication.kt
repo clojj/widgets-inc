@@ -1,25 +1,17 @@
 package com.winc.infra
 
-import io.r2dbc.spi.ConnectionFactory
 import org.springframework.boot.Banner
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.flyway.FlywayProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
-import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
-import org.springframework.r2dbc.connection.R2dbcTransactionManager
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.transaction.TransactionDefinition
-import org.springframework.transaction.reactive.TransactionalOperator
 
 @SpringBootApplication
-@EnableConfigurationProperties(FlywayProperties::class)
 @EnableWebSecurity
 @ComponentScan(basePackages = ["com.winc.product"])
-@EnableR2dbcRepositories(basePackages = ["com.winc.*.adapter.*.persistence.r2dbc"])
+@EnableJdbcRepositories(basePackages = ["com.winc.product.adapter.outbound.persistence"])
 class WidgetIncApplication
 
 fun main(args: Array<String>) {
@@ -33,11 +25,5 @@ val transactionDefinition: TransactionDefinition = object : TransactionDefinitio
     override fun getIsolationLevel(): Int {
         return TransactionDefinition.ISOLATION_READ_COMMITTED
     }
-}
-
-@Configuration
-class Configurations(val connectionFactory: ConnectionFactory) {
-    @Bean
-    fun txWriteOperator(): TransactionalOperator = TransactionalOperator.create(R2dbcTransactionManager(connectionFactory), transactionDefinition)
 }
 
