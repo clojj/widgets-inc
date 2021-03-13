@@ -1,0 +1,17 @@
+logging:
+  level:
+    org:
+      hibernate: INFO
+#      springframework: DEBUG
+
+
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433
+    username: SA
+    password: sqlserver2019!
+
+  flyway:
+    url: jdbc:sqlserver://localhost:1433
+    user: SA
+    password: sqlserver2019!
