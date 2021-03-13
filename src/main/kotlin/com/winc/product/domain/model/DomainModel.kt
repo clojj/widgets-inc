@@ -3,9 +3,8 @@ package com.winc.product.domain.model
 import arrow.core.Nel
 import arrow.core.Validated
 import arrow.core.Validated.Companion.invalidNel
-import arrow.core.nonEmptyList
 import arrow.core.valid
-import arrow.typeclasses.Semigroup
+import arrow.core.zip
 import com.winc.product.domain.model.Error.ValidationError
 import ddd.DDD
 import hexa.HEXA
@@ -29,7 +28,7 @@ sealed class Product {
         fun <T : Product> of(code: String, name: String, block: (ProductCode, String) -> T): Validated<Error, T> {
             val productCode: Validated<Nel<String>, ProductCode> = ProductCode.of(code)
             val validatedName: Validated<Nel<String>, String> = validateName(name)
-            return Validated.mapN(Semigroup.nonEmptyList(), productCode, validatedName) { code_, name_ ->
+            return productCode.zip(validatedName) { code_, name_ ->
                 block(code_, name_)
             }.mapLeft { ValidationError(it) }
         }

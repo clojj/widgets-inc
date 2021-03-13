@@ -2,9 +2,8 @@ package explorations.birthdaykata
 
 import arrow.core.ValidatedNel
 import arrow.core.invalidNel
-import arrow.core.nonEmptyList
 import arrow.core.valid
-import arrow.typeclasses.Semigroup
+import arrow.core.zip
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -50,9 +49,7 @@ data class Employee(
             dateOfBirth: String?,
             email: String?
         ): ValidationResult<Employee> =
-            ValidationResult.mapN(
-                Semigroup.nonEmptyList(),
-                validateName(firstName),
+            validateName(firstName).zip(
                 validateName(lastName),
                 validateDateOfBirth(dateOfBirth),
                 EmailAddress(email)
