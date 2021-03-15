@@ -1,11 +1,17 @@
+
 logging:
   level:
+    com:
+      winc: INFO
     org:
       hibernate: INFO
 #      springframework: DEBUG
 
-
 spring:
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: none
+
   datasource:
     url: jdbc:sqlserver://localhost:1433
     username: SA
@@ -15,3 +21,6 @@ spring:
     url: jdbc:sqlserver://localhost:1433
     user: SA
     password: sqlserver2019!
+
+# Spring debugging
+# debug: true
