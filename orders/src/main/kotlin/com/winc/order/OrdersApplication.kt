@@ -41,7 +41,7 @@ class OrdersApplication : ApplicationListener<ApplicationReadyEvent>, Logging {
     }
 
     override fun onApplicationEvent(p0: ApplicationReadyEvent) {
-        log.debug { ("DEBUG ${doIt()}") }
+        log.debug { "DEBUG ${doIt()}" }
     }
 
 }
