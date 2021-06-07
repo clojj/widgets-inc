@@ -2,6 +2,9 @@ package explorations.birthdaykata
 
 import arrow.core.Either
 import arrow.core.computations.either
+import arrow.core.computations.eval
+import arrow.core.nonEmptyListOf
+import arrow.fx.coroutines.guarantee
 import arrow.fx.coroutines.parTraverseEither
 import kotlinx.coroutines.*
 import java.time.LocalDate
@@ -22,9 +25,9 @@ suspend fun main() {
     val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     scope.launch {
         val results = env.sendGreetingsUseCase(date = LocalDate.parse("1975-09-11"))
+        println("finished sending:\n$results")
     }
-
-    // println(results)
+    println("FINISHED")
     delay(3500)
 }
 
@@ -37,7 +40,7 @@ suspend fun Env.sendGreetingsUseCase(date: LocalDate): Either<Throwable, Int> {
             delay(2000)
             val greeting = sendGreeting(it)
             delay(1000)
-            println(greeting)
+            println("sent $greeting")
             greeting
         }.bind()
         results.size

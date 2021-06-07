@@ -2,6 +2,7 @@ package explorations.birthdaykata
 
 import arrow.core.Either
 import arrow.core.right
+import java.lang.RuntimeException
 import java.util.*
 import javax.mail.Message
 import javax.mail.Session
@@ -18,7 +19,6 @@ interface EmailService {
 class SmtpEmailService(private val host: String, private val port: Int) : EmailService {
 
     override suspend fun sendGreeting(emailMessage: EmailMessage): Either<Throwable, String> {
-        println("sending ${emailMessage.to}")
 /*
         val session =  buildSession()
         val message = createMessage(session, emailMessage)
@@ -28,7 +28,12 @@ class SmtpEmailService(private val host: String, private val port: Int) : EmailS
             message.subject
         }
 */
-        return emailMessage.to.toString().right()
+        if ("mary.ann@foobar.com" == emailMessage.to.email)
+            throw RuntimeException("send failed!")
+        else {
+            println("sending ${emailMessage.to}")
+            return emailMessage.to.toString().right()
+        }
     }
 
     private suspend fun buildSession(): Session {
